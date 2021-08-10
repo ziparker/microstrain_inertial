@@ -84,7 +84,7 @@ can be used to build docker images, run a shell inside the docker images and pro
 
 The `Makefile` exposes the following tasks. They can all be run from the `.devcontainer` directory:
 * `make build-shell` - Builds the docker image and starts a shell session in the image allowing the user to develop and build the ROS project using common commands such as `catkin_make`
-* `make image` - Builds the runtim image that contains only the required dependencies and the ROS node. The resulting image is names `ros-mscl`
+* `make image` - Builds the runtime image that contains only the required dependencies and the ROS node. The resulting image is names `ros-mscl`
 * `make clean` - Cleans up after the above two tasks
 
 ## License
