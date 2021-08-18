@@ -334,6 +334,9 @@ bool Microstrain::activate_node()
   if(publishers_.filter_relative_pos_pub_)
     publishers_.filter_relative_pos_pub_->on_activate();
   
+  if(publishers_.gnss_dual_antenna_status_pub_)
+    publishers_.gnss_dual_antenna_status_pub_->on_activate();
+  
   return true;
 }
 
@@ -405,6 +408,9 @@ bool Microstrain::deactivate_node()
 
   if(publishers_.filter_relative_pos_pub_)
     publishers_.filter_relative_pos_pub_->on_deactivate();
+
+  if(publishers_.gnss_dual_antenna_status_pub_)
+    publishers_.gnss_dual_antenna_status_pub_->on_deactivate();
 
   return true;
 }
@@ -487,6 +493,9 @@ bool Microstrain::shutdown_or_cleanup_node()
 
   if(publishers_.filter_relative_pos_pub_)
     publishers_.filter_relative_pos_pub_.reset();
+
+  if(publishers_.gnss_dual_antenna_status_pub_)
+    publishers_.gnss_dual_antenna_status_pub_.reset();
 
   //Release services
 

@@ -13,8 +13,8 @@ def generate_launch_description():
            # ****************************************************************** 
 
            LifecycleNode(
-                  package    = "ros2_mscl",
-                  executable = "ros2_mscl_node",
+                  package    = "microstrain_inertial",
+                  executable = "microstrain_inertial_node",
                   namespace  = '',
                   name       = "gx5",
                   parameters = [

@@ -162,5 +162,5 @@ install(DIRECTORY launch config
 # We also have to install MSCL and it's dependencies so it can be found at runtime
 file(GLOB BOOST_LIBS "${MSCL_DIR}/Boost/lib/*")
 install(FILES ${BOOST_LIBS} ${MSCL_DIR}/libmscl.so
-  DESTINATION lib/${PROJECT_NAME}
+  DESTINATION lib
 )
