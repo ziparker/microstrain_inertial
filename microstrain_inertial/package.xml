@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>microstrain_inertial</name>
   <version>1.1.4</version>
   <description>The ros_mscl package provides a driver for the LORD/Microstrain inertial products.</description>
@@ -9,10 +9,11 @@
   <license>MIT</license>
   <url type="website">https://github.com/LORD-MicroStrain/ROS-MSCL</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <depend>roscpp</depend>
-  <depend>cmake_modules</depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <exec_depend>rclcpp_lifecycle</exec_depend>
+  <exec_depend>diagnostic_aggregator</exec_depend>
+  
   <depend>diagnostic_updater</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
@@ -21,20 +22,23 @@
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>tf2_geometry_msgs</depend>
-  
   <depend>microstrain_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>lifecycle_msgs</depend>
+  
+  <build_depend>rclcpp_lifecycle</build_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <!-- Dependencies needed to install MSCL from the CMake file  -->
   <build_depend>jq</build_depend>
   <build_depend>curl</build_depend>
 
-  <build_depend>message_generation</build_depend>
-  <build_depend>roslint</build_depend>
-  <exec_depend>message_runtime</exec_depend>
-  <exec_depend>diagnostic_aggregator</exec_depend>
+  <!-- Test Dependencies -->
+  <test_depend>ament_cpplint</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
 
   <export>
     <rosdoc config="rosdoc.yaml" />
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

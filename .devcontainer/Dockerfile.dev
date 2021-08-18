@@ -1,5 +1,5 @@
 ARG ARCH="amd64"
-ARG ROS_VERSION="noetic"
+ARG ROS_VERSION="galactic"
 FROM ${ARCH}/ros:${ROS_VERSION}-ros-base
 
 # Install MSCL (github deb install is kind of a pain)
@@ -29,7 +29,8 @@ USER microstrain
 RUN echo "source /opt/ros/\${ROS_DISTRO}/setup.bash" >> ${HOME}/.bashrc
 RUN mkdir -p "${HOME}/catkin_ws/src"
 RUN mkdir -p "${HOME}/catkin_ws/build"
-RUN mkdir -p "${HOME}/catkin_ws/devel"
+RUN mkdir -p "${HOME}/catkin_ws/install"
+RUN mkdir -p "${HOME}/catkin_ws/log"
 
 # Initialize rosdep
 RUN rosdep update --rosdistro "${ROS_DISTRO}"

@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
+set(CMAKE_CXX_STANDARD 14)
 project(microstrain_msgs)
 
-find_package(catkin REQUIRED COMPONENTS
-  message_generation
-  std_msgs
-  geometry_msgs
-)
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_runtime REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 # Locate the common code and messages
 set(COMMON_NAME "microstrain_common")
@@ -36,27 +37,15 @@ endif()
 set(SRV_DIR "${COMMON_DIR}/srv")
 FILE(GLOB SRV_FILES RELATIVE "${SRV_DIR}"
     "${SRV_DIR}/*.srv")
-add_service_files(
-  DIRECTORY ${SRV_DIR}
-  FILES ${SRV_FILES}
-)
+list(TRANSFORM SRV_FILES PREPEND ${COMMON_DIR}/srv:)
 
 # Generate Message Files
 set(MSG_DIR "${COMMON_DIR}/msg")
 FILE(GLOB MSG_FILES RELATIVE "${MSG_DIR}"
     "${MSG_DIR}/*.msg")
-add_message_files(
-  DIRECTORY ${MSG_DIR}
-  FILES ${MSG_FILES}
-)
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-  geometry_msgs
-)
+list(TRANSFORM MSG_FILES PREPEND ${COMMON_DIR}/msg:)
 
-catkin_package(CATKIN_DEPENDS
-  message_runtime
-  std_msgs
-  geometry_msgs
-)
+rosidl_generate_interfaces(${PROJECT_NAME} ${MSG_FILES} ${SRV_FILES} DEPENDENCIES std_msgs geometry_msgs)
+
+ament_export_dependencies(rosidl_default_runtime)
+ament_package()

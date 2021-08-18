@@ -1,16 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Parker-Lord GX5-Series Driver Definition File
-//
+// Parker-Lord ROS2 Inertial Driver Definition File
+// 
 // Copyright (c) 2017, Brian Bingham
-// Copyright (c)  2020, Parker Hannifin Corp
-//
+// Copyright (c)  2021, Parker Hannifin Corp
+// 
 // This code is licensed under MIT license (see LICENSE file for details)
-//
+// 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ROS_MSCL_MICROSTRAIN_3DM_H
-#define ROS_MSCL_MICROSTRAIN_3DM_H
+
+#ifndef _MICROSTRAIN_3DM_H
+#define _MICROSTRAIN_3DM_H
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -32,20 +33,37 @@
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace microstrain
+namespace microstrain 
 {
+
 ///
 /// \brief Microstrain class
 ///
-class Microstrain : public MicrostrainNodeBase
+class Microstrain : public rclcpp_lifecycle::LifecycleNode, public MicrostrainNodeBase
 {
-public:
-  Microstrain() = default;
+ public:
+  Microstrain();
   ~Microstrain() = default;
 
-  void run();
-};  // Microstrain class
+  bool configure_node();
+  bool activate_node();
+  bool deactivate_node();
+  bool shutdown_or_cleanup_node();
 
-}  // namespace microstrain
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_configure(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State &prev_state);
 
-#endif  // ROS_MSCL_MICROSTRAIN_3DM_H
+  void parsing_timer_callback();
+
+ private:
+  //Timers
+  rclcpp::TimerBase::SharedPtr main_loop_timer_;
+  rclcpp::TimerBase::SharedPtr device_status_timer_;
+}; //Microstrain class
+
+} // namespace microstrain
+
+#endif  // _MICROSTRAIN_3DM_GX5_45_H

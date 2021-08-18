@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(microstrain_inertial)
 
 # Locate the common code and messages
@@ -11,24 +11,34 @@ set(COMMON_INC_DIR "${COMMON_DIR}/include/${COMMON_NAME}")
 include(${COMMON_DIR}/cmake/download_mscl.cmake)
 download_mscl(VERSION "62.0.0")
 
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format -fno-builtin-memcpy")
+endif()
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roslint
-  message_generation
-  geometry_msgs
-  nav_msgs
-  roscpp
-  sensor_msgs
-  std_msgs
-  std_srvs
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
-  diagnostic_updater
-  microstrain_msgs
-)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(microstrain_msgs REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -39,11 +49,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS
-    include
-  CATKIN_DEPENDS
+ament_export_include_directories()
+ament_export_dependencies(
     roscpp
+    rosidl_default_runtime
     cmake_modules
     tf2
     tf2_ros
@@ -54,8 +63,9 @@ catkin_package(
     sensor_msgs
     nav_msgs
     message_runtime
-    microstrain_msgs
+		microstrain_msgs
 )
+
 ###########
 ## Build ##
 ###########
@@ -63,9 +73,17 @@ catkin_package(
 # Add the catkin includes
 include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
 
-# Set some general CMake flags
-add_definitions(-std=c++11)
-set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
+# Only lint the ROS2 code as the ROS1 code is linted through ROS1 and having two competing standards would make things messy quick
+set(NODE_SRC_FILES
+  src/microstrain_3dm_node.cpp
+)
+if(BUILD_TESTING)
+  # Include linting tests
+  find_package(ament_cmake_cpplint REQUIRED)
+  ament_cpplint(${NODE_SRC_FILES} src/microstrain_3dm.cpp include/${PROJECT_NAME}/microstrain_3dm.h)
+endif()
+
+ament_package()
 
 set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/microstrain_subscribers.cpp
@@ -88,26 +106,22 @@ set(LIB_INC_FILES
   include/${PROJECT_NAME}/microstrain_3dm.h
 )
 add_library(${PROJECT_NAME} ${LIB_SRC_FILES} ${LIB_INC_FILES})
-add_dependencies(${PROJECT_NAME}
-  microstrain_msgs_generate_messages
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-)
-
-add_library(microstrain_diagnostic_updater src/microstrain_diagnostic_updater.cpp)
-add_dependencies(microstrain_diagnostic_updater
-  microstrain_msgs_generate_messages
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  rclcpp_lifecycle
+  std_msgs
+  std_srvs
+  lifecycle_msgs
+  sensor_msgs
+  geometry_msgs
+  nav_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+  microstrain_msgs
 )
 
 # Executables
-set(NODE_SRC_FILES
-  src/microstrain_3dm_node.cpp
-  src/microstrain_diagnostic_updater.cpp
-)
-set(NODE_INC_FILES
-  include/${PROJECT_NAME}/microstrain_3dm.h
-  include/${PROJECT_NAME}/microstrain_diagnostic_updater.h
-)
 add_executable(${PROJECT_NAME}_node ${NODE_SRC_FILES} ${NODE_INC_FILES})
 
 # Let the code know if it is being compiled with ROS1 or ROS2
@@ -135,25 +149,18 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 
 install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  PUBLIC_HEADER DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  DESTINATION share/${PROJECT_NAME}
+  LIBRARY DESTINATION lib/${PROJECT_NAME}
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+  PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
 )
 
 install(DIRECTORY launch config
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DESTINATION share/${PROJECT_NAME}
 )
 
 # We also have to install MSCL and it's dependencies so it can be found at runtime
 file(GLOB BOOST_LIBS "${MSCL_DIR}/Boost/lib/*")
 install(FILES ${BOOST_LIBS} ${MSCL_DIR}/libmscl.so
-  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  DESTINATION lib/${PROJECT_NAME}
 )
-
-#############
-## Testing ##
-#############
-
-## Run roslint on only the node files for now
-roslint_cpp(${LIB_SRC_FILES} ${LIB_INC_FILES} ${NODE_SRC_FILES} ${NODE_INC_FILES})
