@@ -15,7 +15,7 @@ If you already have MSCL installed and want to use your installed version instea
 We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but sometimes there is a delay. The currently supported version of MSCL is [v62.0.0](https://github.com/LORD-MicroStrain/MSCL/releases/tag/v62.0.0)
 
 #### Building from source
-1. Install ROS and create a workspace: [Installing and Configuring Your ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
+1. Install ROS2 and create a workspace: [Configuring Your ROS2 Environment](https://docs.ros.org/en/foxy/Tutorials/Configuring-ROS2-Environment.html)
 
 2. Move the entire ROS-MSCL folder (microstrain_inertial, microstrain_msgs , and microstrain_common for just source) to the your_workspace/src directory.
 
@@ -24,29 +24,34 @@ We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but som
 4. Build your workspace:
         
         cd ~/your_workspace
-        catkin_make
-        source ~/your_workspace/devel/setup.bash
+        colcon build
+        source ~/your_workspace/install/setup.bash
    The source command may need to be run in each terminal prior to launching a ROS node.
 #### Launch the node and publish data
 The following command will launch the driver. Keep in mind each instance needs to be run in a separate terminal.
             
-        roslaunch microstrain_inertial microstrain.launch
-Optional launch parameters:
-- name: namespace the node will publish messages to, default: gx5
-- port: serial port name to connect to the device over, default: /dev/ttyACM0
-- baudrate: baud rate to open the connection with, default: 115200
-- imu_rate: sample rate for IMU data (hz), default: 100
-- debug: output debug info? default: false
-- diagnostics: output diagnostic info? default: true
-    
+        ros2 launch microstrain_inertial microstrain_launch.py
+
+This driver is implemented as a lifecycle node.  Upon running, the node will be in the unconfigured state and no interaction has occurred with the device.  The node must be transitioned as follows for data to be available:
+
+- transition to configure state: 
+
+    ros2 lifecycle set /gx5 configure
+
+- transition to active state: 
+
+    ros2 lifecycle set /gx5 activate
+
+You can stop data from streaming by putting the device into the "deactivate" state.  Both the "cleanup" and "shutdown" states will disconnect from the device and close the raw data log file (if enabled.)
+
 To check published topics:
         
-    rostopic list
+    ros2 topic list
 
 **Example**: Connect to and publish data from two devices simultaneously  
 In two different terminals:
     
-    roslaunch microstrain_inertial microstrain.launch name:=sensor1234
+    ros2 launch microstrain_inertial microstrain.launch name:=sensor1234
 
     roslaunch microstrain_inertial microstrain.launch name:=bestSensor port:=/dev/ttyACM1
 This will launch two nodes that publish data to different namespaces:
@@ -93,4 +98,3 @@ The `Makefile` exposes the following tasks. They can all be run from the `.devco
 ROS-MSCL is released under the MIT License - see the `LICENSE` file in the source distribution.
 
 Copyright (c)  2021, Parker Hannifin Corp.
-

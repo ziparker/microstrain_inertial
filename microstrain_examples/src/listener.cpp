@@ -9,48 +9,43 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <string>
 
-#include "ros/ros.h"
-#include "sensor_msgs/Imu.h"
-#include "std_srvs/Trigger.h"
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/imu.hpp"
 
-void imuDataCallback(const sensor_msgs::Imu::ConstPtr& imu)
+
+namespace microstrain {
+
+class Listener : public rclcpp::Node
 {
-  ROS_INFO("Quaternion Orientation:    [%f, %f, %f, %f]", imu->orientation.x, imu->orientation.y, imu->orientation.z,
-           imu->orientation.w);
-  ROS_INFO("Angular Velocity:          [%f, %f, %f]", imu->angular_velocity.x, imu->angular_velocity.y,
-           imu->angular_velocity.z);
-  ROS_INFO("Linear Acceleration:       [%f, %f, %f]", imu->linear_acceleration.x, imu->linear_acceleration.y,
-           imu->linear_acceleration.z);
+public:
+  Listener() : Node("listener")
+  {
+    // Setup the subscription (lambda for simplicity, but this could also be a member function)
+    sub_ = create_subscription<sensor_msgs::msg::Imu>("/imu/data", 10,
+      [this](sensor_msgs::msg::Imu::UniquePtr imu)
+      {
+        RCLCPP_INFO(get_logger(), "Quaternion Orientation:    [%f, %f, %f, %f]", imu->orientation.x, imu->orientation.y, imu->orientation.z,
+                imu->orientation.w);
+        RCLCPP_INFO(get_logger(), "Angular Velocity:          [%f, %f, %f]", imu->angular_velocity.x, imu->angular_velocity.y,
+                imu->angular_velocity.z);
+        RCLCPP_INFO(get_logger(), "Linear Acceleration:       [%f, %f, %f]", imu->linear_acceleration.x, imu->linear_acceleration.y,
+                imu->linear_acceleration.z);
 
-  // add code here to handle incoming IMU data
-}
+        // add code here to handle incoming IMU data
+      }
+    );
+  }
 
-int main(int argc, char** argv)
+private:
+  rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_;
+};
+
+};  // namespace microstrain
+
+int main(int argc, char * argv[])
 {
-  // register listener to ROS master
-  ros::init(argc, argv, "listener");
-
-  // get the device name parameter
-  std::string deviceName;
-  ros::NodeHandle params("~");
-  params.param<std::string>("device", deviceName, "gx5");
-  ROS_INFO("Got device param: %s", deviceName.c_str());
-
-  // clear param for future use
-  params.deleteParam("device");
-
-  // create the listener node object
-  ros::NodeHandle n;
-
-  // subscribe to the imu/data topic
-  // Parameters:
-  //   topic - namespace (defined in launch file) and topic name
-  //   queue size - maximum number of messages to buffer
-  //   callback - callback function to handle this data
-  ros::Subscriber sub = n.subscribe(("/" + deviceName + "/imu/data"), 3, imuDataCallback);
-
-  // start listening for data
-  ros::spin();
-
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<microstrain::Listener>());
+  rclcpp::shutdown();
   return 0;
 }

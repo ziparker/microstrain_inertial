@@ -1,37 +1,27 @@
-#! /usr/bin/env python
-import rospy
+#! /usr/bin/env python3
+import rclpy
+from rclpy.node import Node
 from sensor_msgs.msg import Imu
 
-def imuDataCallback(imu):
-    rospy.loginfo("Quaternion Orientation:  [%f, %f, %f, %f]", imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w);
-    rospy.loginfo("Angular Velocity:        [%f, %f, %f]", imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z);
-    # add code here to handle incoming IMU data
+class Listener(Node):
+    def __init__(self):
+        super().__init__("listener")
+        self.subscription = self.create_subscription(Imu, '/imu/data', self.imuDataCallback, 10)
+
+    def imuDataCallback(self, imu):
+        self.get_logger().info("Quaternion Orientation:  [%f, %f, %f, %f]" % (imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w));
+        self.get_logger().info("Angular Velocity:        [%f, %f, %f]" % (imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z));
+        # add code here to handle incoming IMU data
     
-def listener():
-
-    rospy.init_node('listener', anonymous=True)
-
-    # get the device name parameter
-    deviceName = 'gx5'
-    nameParam = rospy.get_name() + '/device'
-
-    if rospy.has_param(nameParam):
-        deviceName = rospy.get_param(nameParam)
-
-        # clear parameter for future use
-        rospy.delete_param(nameParam)
-
-    # subscribe to the imu/data topic
-    #Parameters:
-    #   topic - namespace (defined in launch file) and topic name
-    #   message type - type of message expected
-    #   callback - callback function to handle this data
-    rospy.Subscriber(("/" + deviceName + "/imu/data"), Imu, imuDataCallback)
-    rospy.loginfo(("listening to /" + deviceName + "/imu/data"))
-
-    # start listening for data
-    rospy.spin()
-
 if __name__ == '__main__':
-    listener()
+    rclpy.init(args=None)
 
+    listener = Listener()
+
+    rclpy.spin(listener)
+
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    listener.destroy_node()
+    rclpy.shutdown()

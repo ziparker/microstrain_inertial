@@ -14,8 +14,8 @@ Prerequisite: completed setup and build steps found [here](https://github.com/LO
 3. Build your workspace:
         
         cd ~/your_workspace
-        catkin_make
-        source ~/your_workspace/devel/setup.bash
+        colcon build
+        source ~/your_workspace/install/setup.bash
    The source command may need to be run in each terminal prior to launching a ROS node.
    You may need to change the permissions on the listener.py file if it is failing to run.
 
@@ -23,35 +23,14 @@ Prerequisite: completed setup and build steps found [here](https://github.com/LO
 #### Launch the listener node
 Launch the inertial device node:
             
-    roslaunch microstrain_inertial microstrain.launch
+    ros2 launch microstrain_inertial microstrain_launch.py
 
 In a separate terminal, launch the example listener node:
 
-    roslaunch microstrain_examples listener_cpp.launch
+    ros2 launch microstrain_examples listener_cpp_launch.py
 
-Optional launch parameters:
-- name: the namespace of the listener node, default: listener_cpp
-- device: the namespace of the inertial device node to subscribe to, default: gx5
+In another seperate terminal, configure and activate the device node
 
+    ros2 lifecycle set /gx5 configure
+    ros2 lifecycle set /gx5 activate
 
-**Example**: Launch two listener subscribed to different namespaces
-
-In two different terminals:
-    
-    roslaunch microstrain_examples listener_cpp.launch name:=listener1234 device:=sensor1234
-
-    roslaunch microstrain_examples listener_cpp.launch name:=bestListener device:=bestSensor
-This will launch two nodes that listen to IMU data in different namespaces:
-- listener1234, subscribed to: /sensor1234/imu/data
-- bestListener, subscribed to: /bestSensor/imu/data
-
-Test this by changing the namespace of the inertial device node:
-1. Launch sensor1234:
-
-        roslaunch microstrain_inertial microstrain.launch name:=sensor1234
-    Data will begin to stream in only the listener1234 terminal.
-2. Stop sensor1234
-3. Launch bestSensor:
-
-        roslaunch microstrain_inertial microstrain.launch name:=bestSensor
-    Data will begin to stream in only the bestListener terminal.
