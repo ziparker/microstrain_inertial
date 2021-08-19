@@ -26,6 +26,7 @@
 
 #include "microstrain_inertial/microstrain_3dm.h"
 #include <tf2/LinearMath/Transform.h>
+#include "lifecycle_msgs/msg/transition.hpp"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialization
@@ -241,19 +242,19 @@ bool Microstrain::configure_node()
     RCLCPP_DEBUG(this->get_logger(), "Initializing base node");
     if (!MicrostrainNodeBase::configure(this))
     {
-      RCLCPP_FATAL(this->get_logger(), "Failed to configure node base");
+      RCLCPP_ERROR(this->get_logger(), "Failed to configure node base");
       return false;
     }
   }
-  catch(mscl::Error_Connection)
+  catch(const mscl::Error_Connection&)
   {
     RCLCPP_ERROR(this->get_logger(), "Error: Device Disconnected");
     return false;
   }
 
-  catch(mscl::Error &e)
+  catch(const mscl::Error &e)
   {
-    RCLCPP_FATAL(this->get_logger(), "Error: %s", e.what());
+    RCLCPP_ERROR(this->get_logger(), "Error: %s", e.what());
     return false;
   }
 
@@ -268,18 +269,19 @@ bool Microstrain::configure_node()
 
 bool Microstrain::activate_node()
 {
-  //Start timer callbacks
-  std::chrono::milliseconds timer_interval_ms(static_cast<int>(1.0 / timer_update_rate_hz_ * 1000.0));
-  
-  //Create and stop the wall timers for data parsing and device status
-  main_loop_timer_     = this->create_wall_timer(timer_interval_ms, std::bind(&MicrostrainNodeBase::parse_and_publish, this));
+  // Activate the base node to start the background tasks
+  if (!MicrostrainNodeBase::activate())
+  {
+    RCLCPP_ERROR(this->get_logger(), "Failed to activate base node");
+    return false;
+  }
 
-  RCLCPP_INFO(this->get_logger(), "Data Parsing timer started at <%f> hz", timer_update_rate_hz_);
-  RCLCPP_INFO(this->get_logger(), "Resuming the device data streams");
+  // Start a timer around a wrapper function to catch errors
+  parsing_timer_ = create_timer<Microstrain>(node_, timer_update_rate_hz_,
+      &Microstrain::parse_and_publish_wrapper, this);
+  device_status_timer_ = create_timer<Microstrain>(node_, 1.0,
+      &Microstrain::device_status_wrapper, this);
 
-  //Resume the device
-  config_.inertial_device_->resume();
-  
   //Activate publishers
   if (publishers_.device_status_pub_)
     publishers_.device_status_pub_->on_activate();
@@ -346,14 +348,11 @@ bool Microstrain::activate_node()
 
 bool Microstrain::deactivate_node()
 {
-  //Stop timer callbacks
-  main_loop_timer_->cancel(); 
-  device_status_timer_->cancel();
-
-  RCLCPP_INFO(this->get_logger(), "Device set to idle");
-
-  //Set the device to idle
-  config_.inertial_device_->setToIdle();
+  //Deactivate the base node
+  if (!MicrostrainNodeBase::deactivate())
+  {
+    RCLCPP_ERROR(this->get_logger(), "Unable to deactivate node base");
+  }
 
   //Deactivate publishers
   if (publishers_.device_status_pub_)
@@ -422,23 +421,12 @@ bool Microstrain::deactivate_node()
 
 bool Microstrain::shutdown_or_cleanup_node()
 {
-
-  //Release the inertial node, if necessary
-  if(config_.inertial_device_)
+  //Shutdown the base node
+  if(!MicrostrainNodeBase::shutdown())
   {
-    config_.inertial_device_->setToIdle();
-    config_.inertial_device_->connection().disconnect();
+    // Even though this is an error, don't return a failure on shutdown as it is not a fatal error
+    RCLCPP_ERROR(this->get_logger(), "Failed to shutdown base node");
   }
-
-  //Close raw data file if enabled
-  if(config_.raw_file_enable_)
-  {
-    config_.raw_file_.close();
-  }
-
-  //Release timers
-  main_loop_timer_.reset();
-  device_status_timer_.reset();
 
   //Release publishers
   if (publishers_.device_status_pub_)
@@ -497,10 +485,63 @@ bool Microstrain::shutdown_or_cleanup_node()
   if(publishers_.gnss_dual_antenna_status_pub_)
     publishers_.gnss_dual_antenna_status_pub_.reset();
 
-  //Release services
-
-
   return true;
+}
+
+void Microstrain::parse_and_publish_wrapper()
+{
+  // call the parsing function in a try catch block so we can transition the state instead of crashing when an error happens
+  try
+  {
+    parseAndPublish();
+  }
+  catch (const std::exception& e)
+  {
+    RCLCPP_ERROR(this->get_logger(), "Error during processing: %s", e.what());
+    handle_exception();
+  }
+}
+
+void Microstrain::device_status_wrapper()
+{
+  // call the device status function in a try catch block so we can transition the state instead of crashing when an error happens
+  try
+  {
+    publishers_.publishDeviceStatus();
+  }
+  catch (const std::exception& e)
+  {
+    RCLCPP_ERROR(this->get_logger(), "Error during processing: %s", e.what());
+    handle_exception();
+  }
+}
+
+void Microstrain::handle_exception()
+{
+  // Manuallly transition to deactivate state so that the node can be cleanly restarted
+  RCLCPP_INFO(this->get_logger(), "Transitioning to deactivate state");
+  const auto& inactive_state = LifecycleNode::deactivate();
+  if (inactive_state.label() == "inactive")
+  {
+    RCLCPP_WARN(this->get_logger(), "Successfully transitioned to inactive, cleaning up node to fresh state");
+    const auto& cleanup_state = LifecycleNode::cleanup();
+    if (cleanup_state.label() == "unconfigured")
+    {
+      RCLCPP_WARN(this->get_logger(), "Node has been successfully cleaned up from error. transition to configure state to reconfigure");
+    }
+    else
+    {
+      RCLCPP_ERROR(this->get_logger(), "Transition to cleanup resulted in transition to %s instead of inactive", cleanup_state.label().c_str());
+      RCLCPP_ERROR(this->get_logger(), "Unable to recover, so transitioning to shutdown. This node is no longer usable");
+      LifecycleNode::shutdown();
+    }
+  }
+  else
+  {
+    RCLCPP_ERROR(this->get_logger(), "Transition to deactivate resulted in transition to %s instead of inactive", inactive_state.label().c_str());
+    RCLCPP_ERROR(this->get_logger(), "Unable to recover, so transitioning to shutdown. This node is no longer usable");
+    LifecycleNode::shutdown();
+  }
 }
 
 } // namespace Microstrain
