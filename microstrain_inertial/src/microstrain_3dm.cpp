@@ -44,6 +44,9 @@ Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
   //Declare/Initialize Parameters
   this->declare_parameter("port",                  std::string("/dev/ttyACM0"));
   this->declare_parameter("baudrate",              115200);
+  this->declare_parameter("poll_port",             false);
+  this->declare_parameter("poll_rate_hz",          1.0);
+  this->declare_parameter("poll_max_tries",        60);
   this->declare_parameter("device_setup",          false);
   this->declare_parameter("save_settings",         false);
   this->declare_parameter("use_device_timestamp",  false);

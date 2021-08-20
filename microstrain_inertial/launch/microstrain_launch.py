@@ -33,6 +33,12 @@ def generate_launch_description():
                               "gnss2_frame_id"  : "gnss2_antenna_wgs84",
                               "filter_frame_id" : "sensor_wgs84",
 
+                              # Waits for a configurable amount of time until the device exists
+                              # If poll_max_tries is set to -1 we will poll forever until the device exists
+                              "poll_port"      : False,
+                              "poll_rate_hz"   : 1.0,
+                              "poll_max_tries" : 60,
+
                               # Controls if the driver outputs data with-respect-to ENU frame
                               #      false - position, velocity, and orientation are WRT the NED frame (native device frame)
                               #      true  - position, velocity, and orientation are WRT the ENU frame
