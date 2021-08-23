@@ -27,7 +27,7 @@ Prior to version `2.0.0`, this repo contained the following ROS packages:
 
 Due to requirements laid out by the ROS maintainers [here](https://www.ros.org/reps/rep-0144.html), as of version `2.0.0`, this repo contains the following ROS packages:
 * `microstrain_inertial` -- ROS node that will communicate with the devices
-* `microstrain_msgs` -- Collection of messages produces by the `microstrain_inertial` node
+* `microstrain_msgs` -- Collection of messages produced by the `microstrain_inertial` node
 * `microstrain_examples` -- Collection of examples that show how to interact with the `microstrain_inertial` node. Currently contains one simple C++ and python subscriber node
 
 ## Build Instructions
@@ -69,11 +69,11 @@ This driver is implemented as a lifecycle node.  Upon running, the node will be 
 
 - transition to configure state: 
 
-    ros2 lifecycle set /gx5 configure
+    ros2 lifecycle set /gx5/microstrain_inertial_node configure
 
 - transition to active state: 
 
-    ros2 lifecycle set /gx5 activate
+    ros2 lifecycle set /gx5/microstrain_inertial_node activate
 
 You can stop data from streaming by putting the device into the "deactivate" state.  Both the "cleanup" and "shutdown" states will disconnect from the device and close the raw data log file (if enabled.)
 
@@ -86,7 +86,7 @@ In two different terminals:
     
     ros2 launch microstrain_inertial microstrain.launch name:=sensor1234
 
-    roslaunch microstrain_inertial microstrain.launch name:=bestSensor port:=/dev/ttyACM1
+    ros2 launch microstrain_inertial microstrain.launch name:=bestSensor port:=/dev/ttyACM1
 This will launch two nodes that publish data to different namespaces:
 - sensor1234, connected over port: /dev/ttyACM0
 - bestSensor, connected over port: /dev/ttyACM1

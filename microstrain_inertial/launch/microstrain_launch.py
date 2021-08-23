@@ -1,4 +1,6 @@
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import LifecycleNode
 
 # Standalone example launch file for GX3, GX4, GX/CX5, RQ1 and GQ7 series devices
@@ -7,6 +9,19 @@ from launch_ros.actions import LifecycleNode
 
 def generate_launch_description():
       return LaunchDescription([
+            # Declare arguments with default values
+            DeclareLaunchArgument('name',             default_value='gx5'),
+            DeclareLaunchArgument('port',             default_value='/dev/ttyACM0'),
+            DeclareLaunchArgument('baudrate',         default_value='115200'),
+            DeclareLaunchArgument('debug',            default_value='False'),
+            DeclareLaunchArgument('diagnostics',      default_value='False'),
+            DeclareLaunchArgument('imu_frame_id',     default_value='sensor'),
+            DeclareLaunchArgument('imu_data_rate',    default_value='100'),
+            DeclareLaunchArgument('filter_data_rate', default_value='10'),
+            DeclareLaunchArgument('gnss1_frame_id',   default_value='gnss1_antenna_wgs84'),
+            DeclareLaunchArgument('gnss2_frame_id',   default_value='gnss2_antenns_wgs84'),
+            DeclareLaunchArgument('filter_frame_id',  default_value='sensor_wgs84'),
+            DeclareLaunchArgument('use_enu_frame',    default_value='False'),
 
            # ****************************************************************** 
            # Microstrain sensor node 
@@ -15,8 +30,8 @@ def generate_launch_description():
            LifecycleNode(
                   package    = "microstrain_inertial",
                   executable = "microstrain_inertial_node",
-                  namespace  = '',
-                  name       = "gx5",
+                  namespace  = LaunchConfiguration('name'),
+                  name       = "microstrain_inertial_node",
                   parameters = [
 
                         {
@@ -24,14 +39,14 @@ def generate_launch_description():
                               # General Settings 
                               # ****************************************************************** 
                               
-                              "port"            : "/dev/ttyACM0",
-                              "baudrate"        : 115200,
-                              "debug"           : False,
-                              "diagnostics"     : True,
-                              "imu_frame_id"    : "sensor",
-                              "gnss1_frame_id"  : "gnss1_antenna_wgs84",
-                              "gnss2_frame_id"  : "gnss2_antenna_wgs84",
-                              "filter_frame_id" : "sensor_wgs84",
+                              "port"            : LaunchConfiguration('port'),
+                              "baudrate"        : LaunchConfiguration('baudrate'),
+                              "debug"           : LaunchConfiguration('debug'),
+                              "diagnostics"     : LaunchConfiguration('diagnostics'),
+                              "imu_frame_id"    : LaunchConfiguration('imu_frame_id'),
+                              "gnss1_frame_id"  : LaunchConfiguration('gnss1_frame_id'),
+                              "gnss2_frame_id"  : LaunchConfiguration('gnss2_frame_id'),
+                              "filter_frame_id" : LaunchConfiguration('filter_frame_id'),
 
                               # Waits for a configurable amount of time until the device exists
                               # If poll_max_tries is set to -1 we will poll forever until the device exists
@@ -43,7 +58,7 @@ def generate_launch_description():
                               #      false - position, velocity, and orientation are WRT the NED frame (native device frame)
                               #      true  - position, velocity, and orientation are WRT the ENU frame
 
-                              "use_enu_frame" : False,
+                              "use_enu_frame" : LaunchConfiguration('use_enu_frame'),
 
                               # Controls if the driver-defined setup is sent to the device
                               #      false - The driver will ignore the settings below and use the device's current settings
@@ -95,7 +110,7 @@ def generate_launch_description():
                               # ****************************************************************** 
 
                               "publish_imu"   : True,
-                              "imu_data_rate" : 100,
+                              "imu_data_rate" : LaunchConfiguration('imu_data_rate'),
 
                               # Static IMU message covariance values (the device does not generate these) 
                               # Since internally these are std::vector we need to use the rosparam tags 
@@ -140,7 +155,7 @@ def generate_launch_description():
                               # ****************************************************************** 
 
                               "publish_filter"   : True,
-                              "filter_data_rate" : 10,
+                              "filter_data_rate" : LaunchConfiguration('filter_data_rate'),
 
                               # Sensor2vehicle frame transformation selector
                               #     0 = None, 1 = Euler Angles, 2 - matrix, 3 - quaternion
