@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(microstrain_examples)
+project(microstrain_inertial_examples)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -12,14 +12,14 @@ find_package(rclpy REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(microstrain_msgs REQUIRED)
+find_package(microstrain_inertial_msgs REQUIRED)
 
 ament_export_include_directories()
 ament_export_dependencies(
     roscpp
     rospy
     sensor_msgs
-    microstrain_msgs
+    microstrain_inertial_msgs
     cmake_modules
 )
 
@@ -30,7 +30,7 @@ add_executable(${LISTENER_CPP} ${LISTENER_CPP_SRC_FILES})
 ament_target_dependencies(${LISTENER_CPP}
   rclcpp
   sensor_msgs
-  microstrain_msgs
+  microstrain_inertial_msgs
 )
 
 install(

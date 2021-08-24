@@ -6,7 +6,7 @@ This code is licensed under MIT license (see LICENSE file for details)
 
 */
 
-#include "microstrain_inertial/microstrain_3dm.h"
+#include "microstrain_inertial_driver/microstrain_inertial_driver.h"
 
 int main(int argc, char **argv)
 {

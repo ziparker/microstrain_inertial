@@ -4,12 +4,12 @@ A example listener node is provided in to demonstrate a very basic C++ node that
 
 Over time we will provide more robust and varied examples in both C++ and Python, but in the meantime we hope this helps in quickly testing to ensure everything is installed and working properly!
 
-Prerequisite: completed setup and build steps found [here](https://github.com/LORD-MicroStrain/ROS-MSCL).
+Prerequisite: completed setup and build steps found [here](../).
 
 #### Create the example package
-1. If the entire ROS-MSCL package, including the `microstrain_examples` directory, is not already there move the `microstrain_examples` package to the `your_workspace/src` folder.
+1. If the entire ROS-MSCL package, including the `microstrain_inertial_examples` directory, is not already there move the `microstrain_inertial_examples` package to the `your_workspace/src` folder.
 
-2. Locate and register the package to the workspace: `rospack find microstrain_examples`
+2. Locate and register the package to the workspace: `rospack find microstrain_inertial_examples`
 
 3. Build your workspace:
         
@@ -23,14 +23,14 @@ Prerequisite: completed setup and build steps found [here](https://github.com/LO
 #### Launch the listener node
 Launch the inertial device node:
             
-    ros2 launch microstrain_inertial microstrain_launch.py
+    ros2 launch microstrain_inertial_driver microstrain_launch.py
 
 In a separate terminal, launch the example listener node:
 
-    ros2 launch microstrain_examples listener_cpp_launch.py
+    ros2 launch microstrain_inertial_examples listener_cpp_launch.py
 
 In another seperate terminal, configure and activate the device node
 
-    ros2 lifecycle set /gx5 configure
-    ros2 lifecycle set /gx5 activate
+    ros2 lifecycle set /gx5/microstrain_inertial_driver_node configure
+    ros2 lifecycle set /gx5/microstrain_inertial_driver_node activate
 

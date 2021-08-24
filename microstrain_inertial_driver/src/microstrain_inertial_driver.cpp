@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <ctime>
 
-#include "microstrain_inertial/microstrain_3dm.h"
+#include "microstrain_inertial_driver/microstrain_inertial_driver.h"
 #include <tf2/LinearMath/Transform.h>
 #include "lifecycle_msgs/msg/transition.hpp"
 

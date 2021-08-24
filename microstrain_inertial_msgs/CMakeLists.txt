@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_STANDARD 14)
-project(microstrain_msgs)
+project(microstrain_inertial_msgs)
 
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_runtime REQUIRED)

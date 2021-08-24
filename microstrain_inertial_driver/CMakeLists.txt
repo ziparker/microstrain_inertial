@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(microstrain_inertial)
+project(microstrain_inertial_driver)
 
 # Locate the common code and messages
 set(COMMON_NAME "microstrain_common")
@@ -38,7 +38,7 @@ find_package(std_srvs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-find_package(microstrain_msgs REQUIRED)
+find_package(microstrain_inertial_msgs REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -63,7 +63,7 @@ ament_export_dependencies(
     sensor_msgs
     nav_msgs
     message_runtime
-		microstrain_msgs
+		microstrain_inertial_msgs
 )
 
 ###########
@@ -75,12 +75,12 @@ include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
 
 # Only lint the ROS2 code as the ROS1 code is linted through ROS1 and having two competing standards would make things messy quick
 set(NODE_SRC_FILES
-  src/microstrain_3dm_node.cpp
+  src/microstrain_inertial_driver_node.cpp
 )
 if(BUILD_TESTING)
   # Include linting tests
   find_package(ament_cmake_cpplint REQUIRED)
-  ament_cpplint(${NODE_SRC_FILES} src/microstrain_3dm.cpp include/${PROJECT_NAME}/microstrain_3dm.h)
+  ament_cpplint(${NODE_SRC_FILES} src/microstrain_inertial_driver.cpp include/${PROJECT_NAME}/microstrain_inertial_driver.h)
 endif()
 
 ament_package()
@@ -92,7 +92,7 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/microstrain_services.cpp
   ${COMMON_SRC_DIR}/microstrain_parser.cpp
   ${COMMON_SRC_DIR}/microstrain_config.cpp
-  src/microstrain_3dm.cpp
+  src/microstrain_inertial_driver.cpp
 )
 set(LIB_INC_FILES
   ${COMMON_INC_DIR}/microstrain_subscribers.h
@@ -103,7 +103,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/microstrain_config.h
   ${COMMON_INC_DIR}/microstrain_defs.h
   ${COMMON_INC_DIR}/microstrain_ros_funcs.h
-  include/${PROJECT_NAME}/microstrain_3dm.h
+  include/${PROJECT_NAME}/microstrain_inertial_driver.h
 )
 add_library(${PROJECT_NAME} ${LIB_SRC_FILES} ${LIB_INC_FILES})
 ament_target_dependencies(${PROJECT_NAME}
@@ -118,7 +118,7 @@ ament_target_dependencies(${PROJECT_NAME}
   tf2
   tf2_ros
   tf2_geometry_msgs
-  microstrain_msgs
+  microstrain_inertial_msgs
 )
 
 # Executables

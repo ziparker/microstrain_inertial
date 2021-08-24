@@ -28,10 +28,10 @@ def generate_launch_description():
            # ****************************************************************** 
 
            LifecycleNode(
-                  package    = "microstrain_inertial",
-                  executable = "microstrain_inertial_node",
+                  package    = "microstrain_inertial_driver",
+                  executable = "microstrain_inertial_driver_node",
                   namespace  = LaunchConfiguration('name'),
-                  name       = "microstrain_inertial_node",
+                  name       = "microstrain_inertial_driver_node",
                   parameters = [
 
                         {

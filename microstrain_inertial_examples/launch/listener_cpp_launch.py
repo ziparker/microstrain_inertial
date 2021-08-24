@@ -9,10 +9,10 @@ def generate_launch_description():
            # ****************************************************************** 
 
             Node(
-                  package    = "microstrain_examples",
-                  executable = "listener.py",
+                  package    = "microstrain_inertial_examples",
+                  executable = "listener_cpp",
                   namespace  = '',
-                  name       = "listener_py",
+                  name       = "listener_cpp",
                   parameters = [
                   ]
            ) #Node End
