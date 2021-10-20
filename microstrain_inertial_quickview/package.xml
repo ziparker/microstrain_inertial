@@ -10,13 +10,16 @@
   <url type="website">https://github.com/LORD-MicroStrain/microstrain_inertial</url>
 
   <depend>rclpy</depend>
-  <depend>tf2_ros</depend>
   <depend>rqt_gui</depend>
   <depend>rqt_gui_py</depend>
   <depend>std_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>microstrain_inertial_msgs</depend>
+
+  <!-- Order and type is important here as python-transforms32-pip is dependent on python3-pip -->
+  <build_depend>python3-pip</build_depend>
+  <exec_depend>python-transforms3d-pip</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>
