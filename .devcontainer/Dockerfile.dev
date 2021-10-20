@@ -7,7 +7,8 @@ ENV DEBIAN_FRONTEND="noninteractive"
 RUN set -ex \
     && apt-get update && apt-get install -y \
         gdb \
-        git
+        git \
+        python3-pip
 
 # Add a user that will be used when shelling into this container and allow them to use devices
 ARG USER_ID=1000

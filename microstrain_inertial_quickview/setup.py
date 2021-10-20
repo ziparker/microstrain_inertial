@@ -20,6 +20,7 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         (dest_share_dir, ['package.xml']),
+        (dest_share_dir, glob.glob('launch/*')),
         (dest_common_share_dir, [os.path.join(common_dir, 'plugin.xml')]),
         (dest_common_resource_dir, glob.glob(os.path.join(common_resource_dir, '*'))),
     ],
