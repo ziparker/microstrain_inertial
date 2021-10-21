@@ -20,17 +20,13 @@ if(NOT EXISTS "${COMMON_DIR}/src")
   # Initialize and update the submodule
   execute_process(
     WORKING_DIRECTORY "${${PROJECT_NAME}_SOURCE_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} submodule init
-  )
-  execute_process(
-    WORKING_DIRECTORY "${${PROJECT_NAME}_SOURCE_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} submodule update --recursive
+    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} submodule update --init --recursive
   )
 endif()
 
 # Download and install MSCL
 include(${COMMON_DIR}/cmake/download_mscl.cmake)
-download_mscl(VERSION "62.0.0")
+download_mscl(VERSION "62.1.2")
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
