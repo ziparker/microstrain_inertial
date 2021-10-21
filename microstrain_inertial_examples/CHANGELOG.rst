@@ -2,8 +2,8 @@
 Changelog for package ros_mscl_cpp_example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.5 (2021-10-21)
+------------------
 * Updates maintainers and dependencies in preparation for ROS build farm
 * Renames packages to be more consistent with ROS naming conventions
 * Contributors: Rob Fisher, robbiefish

@@ -2,8 +2,8 @@
 Changelog for package ros_mscl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.5 (2021-10-21)
+------------------
 * Updates maintainers and dependencies in preparation for ROS build farm
 * Updates submodule to check for correct architecture
 * Moves submodules to subdirectory to get bloom working
