@@ -2,6 +2,13 @@
 Changelog for package mscl_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updates maintainers and dependencies in preparation for ROS build farm
+* Moves submodules to subdirectory to get bloom working
+* Renames packages to be more consistent with ROS naming conventions
+* Contributors: Rob Fisher, robbiefish
+
 1.1.4 (2021-07-30)
 ------------------
 * Please see changelog

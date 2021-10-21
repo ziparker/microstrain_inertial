@@ -2,6 +2,14 @@
 Changelog for package ros_mscl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updates maintainers and dependencies in preparation for ROS build farm
+* Updates submodule to check for correct architecture
+* Moves submodules to subdirectory to get bloom working
+* Renames packages to be more consistent with ROS naming conventions
+* Contributors: Rob Fisher, robbiefish
+
 1.1.4 (2021-07-30)
 ------------------
 * Installs MSCL from CMake to hopefully allow this package to be built in the buildfarm
