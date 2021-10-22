@@ -2,6 +2,11 @@
 Changelog for package ros_mscl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+------------------
+* Fixes CMake build errors experienced on the build farm
+* Contributors: Rob Fisher, robbiefish
+
 2.0.5 (2021-10-21)
 ------------------
 * Updates maintainers and dependencies in preparation for ROS build farm
