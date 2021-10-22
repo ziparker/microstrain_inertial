@@ -34,8 +34,8 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format -fno-builtin-memcpy")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -fno-builtin-memcpy")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-builtin-memcpy")
 endif()
 
 ## Find catkin macros and libraries
@@ -94,11 +94,6 @@ include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
 set(NODE_SRC_FILES
   src/microstrain_inertial_driver_node.cpp
 )
-if(BUILD_TESTING)
-  # Include linting tests
-  find_package(ament_cmake_cpplint REQUIRED)
-  ament_cpplint(${NODE_SRC_FILES} src/microstrain_inertial_driver.cpp include/${PROJECT_NAME}/microstrain_inertial_driver.h)
-endif()
 
 ament_package()
 
