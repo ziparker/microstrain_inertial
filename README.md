@@ -12,10 +12,13 @@ This repo is now structured differently as of `2.0.0`.
 There are three important branches that you may want to checkout:
 
 * [master](https://github.com/LORD-MicroStrain/ROS-MSCL/tree/master) -- Contains the most recent ROS1 changes before the transition to `2.0.0`. Kept for backwards compatibility, but no longer updated or supported
-* [main](https://github.com/LORD-MicroStrain/ROS-MSCL/tree/main) -- Contains ROS1 implementation for this node as of `2.0.0`. This version is being actively updated and supported
+* [ros](https://github.com/LORD-MicroStrain/ROS-MSCL/tree/ros) -- Contains ROS1 implementation for this node as of `2.0.0`. This version is being actively updated and supported
 * [ros2](https://github.com/LORD-MicroStrain/ROS-MSCL/tree/ros2) -- Contains ROS2 implementation for this node as of `2.0.0`. This version is being actively updated and supported
 
-Both the `main` and `ros2` branches share most of their code by using the [ROS-MSCL-Common](https://github.com/LORD-MicroStrain/ROS-MSCL-Common) submodule which is submoduled in this repo at `microstrain_common`
+Both the `ros` and `ros2` branches share most of their code by using gis submodules. The following submodules contain most of the actual implementations:
+
+* [microstrain_inertial_driver_common](https://github.com/LORD-MicroStrain/microstrain_inertial_driver_common/tree/main) submoduled in this repo at `microstrain_inertial_driver/microstrain_inertial_driver_common`
+* [microstrain_inertial_msgs_common](https://github.com/LORD-MicroStrain/microstrain_inertial_msgs_common/tree/main) submoduled in this repo at `microstrain_inertial_msgs/microstrain_inertial_msgs_common`
 
 #### Different Package Names
 
@@ -41,20 +44,22 @@ The [CMakeLists.txt](./microstrain_inertial_msgs/CMakeLists.txt) will automatica
 time you pull changes you should pull with the `--recurse-submodules` flag, or alternatively run `git submodule update --recursive` after you have pulled changes
 
 #### MSCL
-MSCL is now installed in the [CMakeLists.txt](./microstrain_inertial_driver/CMakeLists.txt). The version installed can be changed by passing the flag `-DMSCL_VERSION="62.0.0"`
+MSCL is now installed in the [CMakeLists.txt](./microstrain_inertial_driver/CMakeLists.txt). The version installed can be changed by passing the flag `-DMSCL_VERSION="62.1.2"`
 
 If you already have MSCL installed and want to use your installed version instead of the one automatically downloaded, you can specify the location by passing the flag `-DMSCL_DIR=/usr/share/c++-mscl`
 
-We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but sometimes there is a delay. The currently supported version of MSCL is [v62.0.0](https://github.com/LORD-MicroStrain/MSCL/releases/tag/v62.0.0)
+We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but sometimes there is a delay. The currently supported version of MSCL is [v62.1.2](https://github.com/LORD-MicroStrain/MSCL/releases/tag/v62.1.2)
 
 #### Building from source
 1. Install ROS2 and create a workspace: [Configuring Your ROS2 Environment](https://docs.ros.org/en/foxy/Tutorials/Configuring-ROS2-Environment.html)
 
-2. Move the entire ROS-MSCL folder (microstrain_inertial_driver, microstrain_inertial_msgs , and microstrain_common for just source) to the your_workspace/src directory.
+2. Move the entire microstrain_inertial folder (microstrain_inertial_driver, and microstrain_inertial_msgs) to the your_workspace/src directory.
 
-3. Locate and register the ros_mscl package: `rospack find microstrain_inertial_driver`
+3. Locate and register the microstrain_inertial_driver package: `rospack find microstrain_inertial_driver`
 
-4. Build your workspace:
+4. Install rosdeps for this package: `rosdep install --from-paths ~/your_workspace/src --ignore-src -r -y`
+
+5. Build your workspace:
         
         cd ~/your_workspace
         colcon build
