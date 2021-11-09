@@ -1,3 +1,7 @@
+## DEPRECATION NOTICE
+
+**IMPORTANT**: As of `v2.0.6`, this branch will only rececive critical bugfixes. ROS users should migrate to using the [ros](https://github.com/LORD-MicroStrain/microstrain_inertial/tree/ros) branch. ROS2 users should migrate to using the [ros2](https://github.com/LORD-MicroStrain/microstrain_inertial/tree/ros2) branch.
+
 ## Description
 
 Interface (driver) software, including ROS node, for inertial sensors compatible with the [Microstrain Communication Library (MSCL)](https://github.com/LORD-MicroStrain/MSCL).
