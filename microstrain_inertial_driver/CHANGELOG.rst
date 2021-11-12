@@ -2,7 +2,7 @@
 Changelog for package ros_mscl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+2.1.0 (2021-11-12)
 ------------------
 * Adds transform broadcaster that will publish transform between filter_frame_id and filter_child_frame_id
 * Corrects some ENU conversions that were not being properly made
