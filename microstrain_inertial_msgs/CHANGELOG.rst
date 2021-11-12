@@ -2,6 +2,9 @@
 Changelog for package mscl_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+------------------
+
 2.0.5 (2021-10-21)
 ------------------
 * Updates maintainers and dependencies in preparation for ROS build farm
