@@ -2,6 +2,9 @@
 Changelog for package ros_mscl_cpp_example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.1.0 (2021-11-12)
+------------------
+
 2.0.6 (2021-10-22)
 ------------------
 * Fixes CMake build errors experienced on the build farm
