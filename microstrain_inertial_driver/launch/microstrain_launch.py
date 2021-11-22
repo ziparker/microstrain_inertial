@@ -40,10 +40,10 @@ def generate_launch_description():
                               # General Settings 
                               # ****************************************************************** 
                               
-                              "port"                  : LaunchConfiguration('port'),
-                              "baudrate"              : LaunchConfiguration('baudrate'),
-                              "debug"                 : LaunchConfiguration('debug'),
-                              "diagnostics"           : LaunchConfiguration('diagnostics'),
+                              "port"        : LaunchConfiguration('port'),
+                              "baudrate"    : LaunchConfiguration('baudrate'),
+                              "debug"       : LaunchConfiguration('debug'),
+                              "diagnostics" : LaunchConfiguration('diagnostics'),
 
                               # Frame IDs used in the different messages. By default these are set to arbitrary strings as not to interfere with other ROS services.
                               # For more information on common frame IDs, check out: https://www.ros.org/reps/rep-0105.html
