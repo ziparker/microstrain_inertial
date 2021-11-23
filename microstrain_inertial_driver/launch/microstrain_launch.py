@@ -10,18 +10,19 @@ from launch_ros.actions import LifecycleNode
 def generate_launch_description():
       return LaunchDescription([
             # Declare arguments with default values
-            DeclareLaunchArgument('name',             default_value='gx5'),
-            DeclareLaunchArgument('port',             default_value='/dev/ttyACM0'),
-            DeclareLaunchArgument('baudrate',         default_value='115200'),
-            DeclareLaunchArgument('debug',            default_value='False'),
-            DeclareLaunchArgument('diagnostics',      default_value='False'),
-            DeclareLaunchArgument('imu_frame_id',     default_value='sensor'),
-            DeclareLaunchArgument('imu_data_rate',    default_value='100'),
-            DeclareLaunchArgument('filter_data_rate', default_value='10'),
-            DeclareLaunchArgument('gnss1_frame_id',   default_value='gnss1_antenna_wgs84'),
-            DeclareLaunchArgument('gnss2_frame_id',   default_value='gnss2_antenns_wgs84'),
-            DeclareLaunchArgument('filter_frame_id',  default_value='sensor_wgs84'),
-            DeclareLaunchArgument('use_enu_frame',    default_value='False'),
+            DeclareLaunchArgument('name',                  default_value='gx5'),
+            DeclareLaunchArgument('port',                  default_value='/dev/ttyACM0'),
+            DeclareLaunchArgument('baudrate',              default_value='115200'),
+            DeclareLaunchArgument('debug',                 default_value='False'),
+            DeclareLaunchArgument('diagnostics',           default_value='False'),
+            DeclareLaunchArgument('imu_frame_id',          default_value='sensor'),
+            DeclareLaunchArgument('imu_data_rate',         default_value='100'),
+            DeclareLaunchArgument('filter_data_rate',      default_value='10'),
+            DeclareLaunchArgument('gnss1_frame_id',        default_value='gnss1_antenna_wgs84'),
+            DeclareLaunchArgument('gnss2_frame_id',        default_value='gnss2_antenns_wgs84'),
+            DeclareLaunchArgument('filter_frame_id',       default_value='sensor_wgs84'),
+            DeclareLaunchArgument('filter_child_frame_id', default_value='sensor'),
+            DeclareLaunchArgument('use_enu_frame',         default_value='False'),
 
            # ****************************************************************** 
            # Microstrain sensor node 
@@ -39,14 +40,21 @@ def generate_launch_description():
                               # General Settings 
                               # ****************************************************************** 
                               
-                              "port"            : LaunchConfiguration('port'),
-                              "baudrate"        : LaunchConfiguration('baudrate'),
-                              "debug"           : LaunchConfiguration('debug'),
-                              "diagnostics"     : LaunchConfiguration('diagnostics'),
-                              "imu_frame_id"    : LaunchConfiguration('imu_frame_id'),
-                              "gnss1_frame_id"  : LaunchConfiguration('gnss1_frame_id'),
-                              "gnss2_frame_id"  : LaunchConfiguration('gnss2_frame_id'),
-                              "filter_frame_id" : LaunchConfiguration('filter_frame_id'),
+                              "port"        : LaunchConfiguration('port'),
+                              "baudrate"    : LaunchConfiguration('baudrate'),
+                              "debug"       : LaunchConfiguration('debug'),
+                              "diagnostics" : LaunchConfiguration('diagnostics'),
+
+                              # Frame IDs used in the different messages. By default these are set to arbitrary strings as not to interfere with other ROS services.
+                              # For more information on common frame IDs, check out: https://www.ros.org/reps/rep-0105.html
+                              #
+                              # filter_frame_id and filter_child_frame_id are specifically useful as the node will also publish a transform to the /tf topic
+                              # that contains the transform between these two frames. Many ROS tools such as RViz will use the /tf topic to display things like robot position.
+                              "imu_frame_id"          : LaunchConfiguration('imu_frame_id'),
+                              "gnss1_frame_id"        : LaunchConfiguration('gnss1_frame_id'),
+                              "gnss2_frame_id"        : LaunchConfiguration('gnss2_frame_id'),
+                              "filter_frame_id"       : LaunchConfiguration('filter_frame_id'),
+                              "filter_child_frame_id" : LaunchConfiguration('filter_child_frame_id'),
 
                               # Waits for a configurable amount of time until the device exists
                               # If poll_max_tries is set to -1 we will poll forever until the device exists
