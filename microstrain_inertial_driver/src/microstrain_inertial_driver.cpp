@@ -219,6 +219,10 @@ bool Microstrain::activate_node()
   if(publishers_.rtk_pub_)
     publishers_.rtk_pub_->on_activate();
   
+  //NMEA publisher
+  if (publishers_.nmea_sentence_pub_)
+    publishers_.nmea_sentence_pub_->on_activate();
+
   //Filter Publishers
   if(publishers_.filter_status_pub_)
     publishers_.filter_status_pub_->on_activate();
