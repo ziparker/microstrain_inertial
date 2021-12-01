@@ -12,6 +12,7 @@ def generate_launch_description():
             # Declare arguments with default values
             DeclareLaunchArgument('name',                  default_value='gx5'),
             DeclareLaunchArgument('port',                  default_value='/dev/ttyACM0'),
+            DeclareLaunchArgument('aux_port',              default_value='/dev/ttyACM1'),
             DeclareLaunchArgument('baudrate',              default_value='115200'),
             DeclareLaunchArgument('debug',                 default_value='False'),
             DeclareLaunchArgument('diagnostics',           default_value='False'),
@@ -22,6 +23,7 @@ def generate_launch_description():
             DeclareLaunchArgument('gnss2_frame_id',        default_value='gnss2_antenns_wgs84'),
             DeclareLaunchArgument('filter_frame_id',       default_value='sensor_wgs84'),
             DeclareLaunchArgument('filter_child_frame_id', default_value='sensor'),
+            DeclareLaunchArgument('nmea_frame_id',         default_value='nmea'),
             DeclareLaunchArgument('use_enu_frame',         default_value='False'),
 
            # ****************************************************************** 
@@ -39,8 +41,11 @@ def generate_launch_description():
                               # ****************************************************************** 
                               # General Settings 
                               # ****************************************************************** 
-                              
+
+                              # port is the main port that the device will communicate over. For all devices except the GQy, this is the only available port.
+                              # aux_port is only available for the GQ7 and is only needed when streaming RTCM corrections to the device from ROS, or if you want to publish NMEA sentences from this node
                               "port"        : LaunchConfiguration('port'),
+                              "aux_port"    : LaunchConfiguration('aux_port'),
                               "baudrate"    : LaunchConfiguration('baudrate'),
                               "debug"       : LaunchConfiguration('debug'),
                               "diagnostics" : LaunchConfiguration('diagnostics'),
@@ -55,6 +60,7 @@ def generate_launch_description():
                               "gnss2_frame_id"        : LaunchConfiguration('gnss2_frame_id'),
                               "filter_frame_id"       : LaunchConfiguration('filter_frame_id'),
                               "filter_child_frame_id" : LaunchConfiguration('filter_child_frame_id'),
+                              "nmea_frame_id"         : LaunchConfiguration('nmea_frame_id'),
 
                               # Waits for a configurable amount of time until the device exists
                               # If poll_max_tries is set to -1 we will poll forever until the device exists
@@ -157,6 +163,13 @@ def generate_launch_description():
 
                               # (GQ7 Only) Enable RTK dongle interface 
                               "rtk_dongle_enable" : False,
+
+                              # (GQ7 Only) Allow the user to send RTCM messages to this node, and stream those messages to the GQ7
+                              "subscribe_rtcm" : False,
+                              "rtcm_topic"     : "/rtcm",
+
+                              # (GQ7 Only) Send NMEA sentences from the aux port out on a ROS topic
+                              "publish_nmea"   : False,
 
                               # ****************************************************************** 
                               # Kalman Filter Settings (only applicable for devices with a Kalman Filter) 
