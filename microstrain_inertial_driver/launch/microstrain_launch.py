@@ -237,6 +237,15 @@ def generate_launch_description():
                               "filter_external_gps_time_topic"         : "/external_gps_time",
                               "gps_leap_seconds"                       : 18.0,
 
+                              # External Speed Control. This node will subscribe on this topic only if filter_enable_odometer_aiding is set to true
+                              #      Notes: This subscription will be disabled if enable_hardware_odometer is set to true
+                              "filter_external_speed_topic" : "/external_speed",
+
+                              # Hardware Odometer Control
+                              "enable_hardware_odometer" : False,
+                              "odometer_scaling"         : 0.0,
+                              "odometer_uncertainty"     : 0.0,
+
 
                               #  (GQ7 only) GPIO Configuration
                               #    Notes:    For information on possible configurations and specific pin options,
