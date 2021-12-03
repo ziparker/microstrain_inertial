@@ -171,10 +171,18 @@ bool Microstrain::activate_node()
   }
 
   // Start a timer around a wrapper function to catch errors
-  parsing_timer_ = create_timer<Microstrain>(node_, timer_update_rate_hz_,
-      &Microstrain::parse_and_publish_wrapper, this);
+  main_parsing_timer_ = create_timer<Microstrain>(node_, timer_update_rate_hz_,
+      &Microstrain::parse_and_publish_main_wrapper, this);
   device_status_timer_ = create_timer<Microstrain>(node_, 1.0,
       &Microstrain::device_status_wrapper, this);
+
+  // Start the aux timer if we were requested to do so
+  if (config_.supports_rtk_ && config_.publish_nmea_)
+  {
+    RCLCPP_INFO(this->get_logger(), "Starting aux port parsing");
+    aux_parsing_timer_ = create_timer<Microstrain>(node_, 2.0,
+        &Microstrain::parse_and_publish_aux_wrapper, this);
+  }
 
   //Activate publishers
   if (publishers_.device_status_pub_)
@@ -211,6 +219,10 @@ bool Microstrain::activate_node()
   if(publishers_.rtk_pub_)
     publishers_.rtk_pub_->on_activate();
   
+  //NMEA publisher
+  if (publishers_.nmea_sentence_pub_)
+    publishers_.nmea_sentence_pub_->on_activate();
+
   //Filter Publishers
   if(publishers_.filter_status_pub_)
     publishers_.filter_status_pub_->on_activate();
@@ -382,16 +394,30 @@ bool Microstrain::shutdown_or_cleanup_node()
   return true;
 }
 
-void Microstrain::parse_and_publish_wrapper()
+void Microstrain::parse_and_publish_main_wrapper()
 {
   // call the parsing function in a try catch block so we can transition the state instead of crashing when an error happens
   try
   {
-    parseAndPublish();
+    parseAndPublishMain();
   }
   catch (const std::exception& e)
   {
-    RCLCPP_ERROR(this->get_logger(), "Error during processing: %s", e.what());
+    RCLCPP_ERROR(this->get_logger(), "Error during main processing: %s", e.what());
+    handle_exception();
+  }
+}
+
+void Microstrain::parse_and_publish_aux_wrapper()
+{
+  // call the parsing function in a try catch block so we can transition the state instead of crashing when an error happens
+  try
+  {
+    parseAndPublishAux();
+  }
+  catch (const std::exception& e)
+  {
+    RCLCPP_ERROR(this->get_logger(), "Error during aux processing: %s", e.what());
     handle_exception();
   }
 }

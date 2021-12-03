@@ -47,6 +47,8 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(nmea_msgs REQUIRED)
+find_package(mavros_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -79,6 +81,8 @@ ament_export_dependencies(
     geometry_msgs
     sensor_msgs
     nav_msgs
+    nmea_msgs
+    mavros_msgs
     message_runtime
 		microstrain_inertial_msgs
 )
@@ -127,6 +131,8 @@ ament_target_dependencies(${PROJECT_NAME}
   sensor_msgs
   geometry_msgs
   nav_msgs
+  nmea_msgs
+  mavros_msgs
   tf2
   tf2_ros
   tf2_geometry_msgs
