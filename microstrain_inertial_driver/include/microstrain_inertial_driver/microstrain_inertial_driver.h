@@ -56,7 +56,8 @@ class Microstrain : public rclcpp_lifecycle::LifecycleNode, public MicrostrainNo
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &prev_state);
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State &prev_state);
 
-  void parse_and_publish_wrapper();
+  void parse_and_publish_main_wrapper();
+  void parse_and_publish_aux_wrapper();
   void device_status_wrapper();
 
  private:
