@@ -10,18 +10,21 @@ from launch_ros.actions import LifecycleNode
 def generate_launch_description():
       return LaunchDescription([
             # Declare arguments with default values
-            DeclareLaunchArgument('name',             default_value='gx5'),
-            DeclareLaunchArgument('port',             default_value='/dev/ttyACM0'),
-            DeclareLaunchArgument('baudrate',         default_value='115200'),
-            DeclareLaunchArgument('debug',            default_value='False'),
-            DeclareLaunchArgument('diagnostics',      default_value='False'),
-            DeclareLaunchArgument('imu_frame_id',     default_value='sensor'),
-            DeclareLaunchArgument('imu_data_rate',    default_value='100'),
-            DeclareLaunchArgument('filter_data_rate', default_value='10'),
-            DeclareLaunchArgument('gnss1_frame_id',   default_value='gnss1_antenna_wgs84'),
-            DeclareLaunchArgument('gnss2_frame_id',   default_value='gnss2_antenns_wgs84'),
-            DeclareLaunchArgument('filter_frame_id',  default_value='sensor_wgs84'),
-            DeclareLaunchArgument('use_enu_frame',    default_value='False'),
+            DeclareLaunchArgument('name',                  default_value='gx5'),
+            DeclareLaunchArgument('port',                  default_value='/dev/ttyACM0'),
+            DeclareLaunchArgument('aux_port',              default_value='/dev/ttyACM1'),
+            DeclareLaunchArgument('baudrate',              default_value='115200'),
+            DeclareLaunchArgument('debug',                 default_value='False'),
+            DeclareLaunchArgument('diagnostics',           default_value='False'),
+            DeclareLaunchArgument('imu_frame_id',          default_value='sensor'),
+            DeclareLaunchArgument('imu_data_rate',         default_value='100'),
+            DeclareLaunchArgument('filter_data_rate',      default_value='10'),
+            DeclareLaunchArgument('gnss1_frame_id',        default_value='gnss1_antenna_wgs84'),
+            DeclareLaunchArgument('gnss2_frame_id',        default_value='gnss2_antenns_wgs84'),
+            DeclareLaunchArgument('filter_frame_id',       default_value='sensor_wgs84'),
+            DeclareLaunchArgument('filter_child_frame_id', default_value='sensor'),
+            DeclareLaunchArgument('nmea_frame_id',         default_value='nmea'),
+            DeclareLaunchArgument('use_enu_frame',         default_value='False'),
 
            # ****************************************************************** 
            # Microstrain sensor node 
@@ -38,15 +41,26 @@ def generate_launch_description():
                               # ****************************************************************** 
                               # General Settings 
                               # ****************************************************************** 
-                              
-                              "port"            : LaunchConfiguration('port'),
-                              "baudrate"        : LaunchConfiguration('baudrate'),
-                              "debug"           : LaunchConfiguration('debug'),
-                              "diagnostics"     : LaunchConfiguration('diagnostics'),
-                              "imu_frame_id"    : LaunchConfiguration('imu_frame_id'),
-                              "gnss1_frame_id"  : LaunchConfiguration('gnss1_frame_id'),
-                              "gnss2_frame_id"  : LaunchConfiguration('gnss2_frame_id'),
-                              "filter_frame_id" : LaunchConfiguration('filter_frame_id'),
+
+                              # port is the main port that the device will communicate over. For all devices except the GQy, this is the only available port.
+                              # aux_port is only available for the GQ7 and is only needed when streaming RTCM corrections to the device from ROS, or if you want to publish NMEA sentences from this node
+                              "port"        : LaunchConfiguration('port'),
+                              "aux_port"    : LaunchConfiguration('aux_port'),
+                              "baudrate"    : LaunchConfiguration('baudrate'),
+                              "debug"       : LaunchConfiguration('debug'),
+                              "diagnostics" : LaunchConfiguration('diagnostics'),
+
+                              # Frame IDs used in the different messages. By default these are set to arbitrary strings as not to interfere with other ROS services.
+                              # For more information on common frame IDs, check out: https://www.ros.org/reps/rep-0105.html
+                              #
+                              # filter_frame_id and filter_child_frame_id are specifically useful as the node will also publish a transform to the /tf topic
+                              # that contains the transform between these two frames. Many ROS tools such as RViz will use the /tf topic to display things like robot position.
+                              "imu_frame_id"          : LaunchConfiguration('imu_frame_id'),
+                              "gnss1_frame_id"        : LaunchConfiguration('gnss1_frame_id'),
+                              "gnss2_frame_id"        : LaunchConfiguration('gnss2_frame_id'),
+                              "filter_frame_id"       : LaunchConfiguration('filter_frame_id'),
+                              "filter_child_frame_id" : LaunchConfiguration('filter_child_frame_id'),
+                              "nmea_frame_id"         : LaunchConfiguration('nmea_frame_id'),
 
                               # Waits for a configurable amount of time until the device exists
                               # If poll_max_tries is set to -1 we will poll forever until the device exists
@@ -150,6 +164,13 @@ def generate_launch_description():
                               # (GQ7 Only) Enable RTK dongle interface 
                               "rtk_dongle_enable" : False,
 
+                              # (GQ7 Only) Allow the user to send RTCM messages to this node, and stream those messages to the GQ7
+                              "subscribe_rtcm" : False,
+                              "rtcm_topic"     : "/rtcm",
+
+                              # (GQ7 Only) Send NMEA sentences from the aux port out on a ROS topic
+                              "publish_nmea"   : False,
+
                               # ****************************************************************** 
                               # Kalman Filter Settings (only applicable for devices with a Kalman Filter) 
                               # ****************************************************************** 
@@ -215,6 +236,15 @@ def generate_launch_description():
                               "filter_enable_external_gps_time_update" : False,
                               "filter_external_gps_time_topic"         : "/external_gps_time",
                               "gps_leap_seconds"                       : 18.0,
+
+                              # External Speed Control. This node will subscribe on this topic only if filter_enable_odometer_aiding is set to true
+                              #      Notes: This subscription will be disabled if enable_hardware_odometer is set to true
+                              "filter_external_speed_topic" : "/external_speed",
+
+                              # Hardware Odometer Control
+                              "enable_hardware_odometer" : False,
+                              "odometer_scaling"         : 0.0,
+                              "odometer_uncertainty"     : 0.0,
 
 
                               #  (GQ7 only) GPIO Configuration

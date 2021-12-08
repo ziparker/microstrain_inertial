@@ -20,17 +20,13 @@ if(NOT EXISTS "${COMMON_DIR}/src")
   # Initialize and update the submodule
   execute_process(
     WORKING_DIRECTORY "${${PROJECT_NAME}_SOURCE_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} submodule init
-  )
-  execute_process(
-    WORKING_DIRECTORY "${${PROJECT_NAME}_SOURCE_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} submodule update --recursive
+    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} submodule update --init --recursive
   )
 endif()
 
 # Download and install MSCL
 include(${COMMON_DIR}/cmake/download_mscl.cmake)
-download_mscl(VERSION "62.0.0")
+download_mscl(VERSION "62.1.2")
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -38,8 +34,8 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format -fno-builtin-memcpy")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -fno-builtin-memcpy")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-builtin-memcpy")
 endif()
 
 ## Find catkin macros and libraries
@@ -51,6 +47,8 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(nmea_msgs REQUIRED)
+find_package(mavros_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -83,6 +81,8 @@ ament_export_dependencies(
     geometry_msgs
     sensor_msgs
     nav_msgs
+    nmea_msgs
+    mavros_msgs
     message_runtime
 		microstrain_inertial_msgs
 )
@@ -98,11 +98,6 @@ include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
 set(NODE_SRC_FILES
   src/microstrain_inertial_driver_node.cpp
 )
-if(BUILD_TESTING)
-  # Include linting tests
-  find_package(ament_cmake_cpplint REQUIRED)
-  ament_cpplint(${NODE_SRC_FILES} src/microstrain_inertial_driver.cpp include/${PROJECT_NAME}/microstrain_inertial_driver.h)
-endif()
 
 ament_package()
 
@@ -136,6 +131,8 @@ ament_target_dependencies(${PROJECT_NAME}
   sensor_msgs
   geometry_msgs
   nav_msgs
+  nmea_msgs
+  mavros_msgs
   tf2
   tf2_ros
   tf2_geometry_msgs

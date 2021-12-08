@@ -2,6 +2,23 @@
 Changelog for package ros_mscl_cpp_example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.2.0 (2021-12-03)
+------------------
+
+2.1.0 (2021-11-12)
+------------------
+
+2.0.6 (2021-10-22)
+------------------
+* Fixes CMake build errors experienced on the build farm
+* Contributors: Rob Fisher, robbiefish
+
+2.0.5 (2021-10-21)
+------------------
+* Updates maintainers and dependencies in preparation for ROS build farm
+* Renames packages to be more consistent with ROS naming conventions
+* Contributors: Rob Fisher, robbiefish
+
 1.1.4 (2021-07-30)
 ------------------
 * Merge branch 'master' of https://github.com/LORD-MicroStrain/ROS-MSCL into develop
