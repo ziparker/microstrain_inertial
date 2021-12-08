@@ -19,7 +19,7 @@ def generate_launch_description():
                  arguments=[
                        "--force-discover",
                        "--perspective-file",
-                       os.path.join(get_package_share_directory('microstrain_inertial_quickview'), 'microstrain_inertial_quickview_common/resource/quickview.perspective'),
+                       os.path.join(get_package_share_directory('microstrain_inertial_rqt'), 'microstrain_inertial_rqt_common/resource/quickview.perspective'),
                  ]
            )
       ])
