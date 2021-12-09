@@ -1,4 +1,4 @@
-.PHONY: all build build-shell clean
+.PHONY: all image build build-shell deploy-tag deploy-latest _deploy clean
 
 # These variables should be overridden in CI builds to configure this build
 version ?= latest
@@ -47,19 +47,44 @@ driver_image_name := $(driver_image_name_no_version):$(version)-$(ros_version)-$
 latest_tag := ros2
 latest_ros_version := rolling
 all_ros_version := foxy galactic rolling
-all_arch := amd64 arm32v7 arm64v8
+all_arch := amd64 arm64v8
 
 all: image
 
-deploy:
+# Meant to be called on "tags" of this repo to create versioned images
+deploy-tag:
+	$(MAKE) --no-print-directory docker=$(docker) version=$(driver_version) _deploy
+
+# Meant to be called on the "ros" branch every time it is pushed to to create "latest" images
+deploy-latest:
+	$(MAKE) --no-print-directory docker=$(docker) version=latest _deploy
+	@latest_manifest_flags=""; \
+	for arch in $(all_arch); do \
+		# Keep track of all the image names so we can make a manifest later \
+		image_name="$$($(MAKE) --no-print-directory version=latest docker=$(docker) arch=$${arch} ros_version=$(latest_ros_version) driver-image-name)"; \
+		latest_manifest_flags="$${latest_manifest_flags} --amend $${image_name}"; \
+	done || exit 1; \
+	\
+	# Tag the latest ROS version to the latest tag \
+	latest_tagged_image="$(driver_image_name_no_version):$(latest_tag)"; \
+	$(docker) manifest create "$${latest_tagged_image}" $${latest_manifest_flags}; \
+	$(docker) manifest push "$${latest_tagged_image}"; \
+	\
+	# Use the latest ROS2 image as our latest tag \
+	latest_image="$(driver_image_name_no_version):latest"; \
+	$(docker) manifest create $${latest_image} $${latest_manifest_flags}; \
+	$(docker) manifest push $${latest_image};
+
+# Abstract deploy task meant to be called by the above tasks, not manually
+_deploy:
 	@for ros_version in $(all_ros_version); do \
 		driver_manifest_flags=""; \
 		for arch in $(all_arch); do \
 			# Keep track of all the image names so we can make a manifest later \
-			image_name="$$($(MAKE) --no-print-directory version=$(driver_version) docker=$(docker) arch=$${arch} ros_version=$${ros_version} driver-image-name)"; \
+			image_name="$$($(MAKE) --no-print-directory version=$(version) docker=$(docker) arch=$${arch} ros_version=$${ros_version} driver-image-name)"; \
 			\
 			# Build the image, and add it's name to a list so we can make the manifest \
-			$(MAKE) --no-print-directory version=$(driver_version) docker=$(docker) arch=$${arch} ros_version=$${ros_version} image || exit 1; \
+			$(MAKE) --no-print-directory version=$(version) docker=$(docker) arch=$${arch} ros_version=$${ros_version} image || exit 1; \
 			driver_manifest_flags="$${driver_manifest_flags} --amend $${image_name}"; \
 			\
 			# Push the image to dockerhub. This requires you to be logged in \
@@ -67,27 +92,10 @@ deploy:
 		done || exit 1; \
 		\
 		# Create the manifest and push it \
-		driver_manifest_name="$(driver_image_name_no_version):$(driver_version)-$${ros_version}"; \
+		driver_manifest_name="$(driver_image_name_no_version):$(version)-$${ros_version}"; \
 		$(docker) manifest create "$${driver_manifest_name}" $${driver_manifest_flags} || exit 1; \
 		$(docker) manifest push "$${driver_manifest_name}" || exit 1; \
-		$(docker) pull "$${driver_manifest_name}" || exit 1; \
-		\
-		# Tag this version as the latest \
-		tagged_manifest="$(driver_image_name_no_version):$${ros_version}"; \
-		$(docker) tag $${driver_manifest_name} $${tagged_manifest} || exit 1; \
-		$(docker) push $${tagged_manifest} || exit 1; \
-	done || exit 1; \
-	\
-	# Tag the latest ROS version to the latest tag \
-	latest_tagged_image="$(driver_image_name_no_version):$(latest_tag)"; \
-	$(docker) tag $(driver_image_name_no_version):$(latest_ros_version) $${latest_tagged_image}; \
-	$(docker) push $${latest_tagged_image}; \
-	\
-	# Use the latest ROS2 image as our latest tag \
-	latest_image="$(driver_image_name_no_version):latest"; \
-	$(docker) tag $${latest_tagged_image} $${latest_image}; \
-	$(docker) push $${latest_image};
-
+	done || exit 1;
 
 image: $(driver_image_artifact)
 
