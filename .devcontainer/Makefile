@@ -54,6 +54,18 @@ all: image
 # Meant to be called on "tags" of this repo to create versioned images
 deploy-tag:
 	$(MAKE) --no-print-directory docker=$(docker) version=$(driver_version) _deploy
+	@latest_manifest_flags=""; \
+	for arch in $(all_arch); do \
+		# Keep track of all the image names so we can make a manifest later \
+		image_name="$$($(MAKE) --no-print-directory version=$(driver_version) docker=$(docker) arch=$${arch} ros_version=$(latest_ros_version) driver-image-name)"; \
+		latest_manifest_flags="$${latest_manifest_flags} --amend $${image_name}"; \
+	done || exit 1; \
+	\
+	# Tag this version number to the latest ros version \
+	versioned_image="$(driver_image_name_no_version):$(driver_version)"; \
+	$(docker) manifest create "$${versioned_image}" $${latest_manifest_flags}; \
+	$(docker) manifest push "$${versioned_image}"; \
+
 
 # Meant to be called on the "ros" branch every time it is pushed to to create "latest" images
 deploy-latest:
