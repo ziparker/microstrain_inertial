@@ -35,6 +35,10 @@ Due to requirements laid out by the ROS maintainers [here](https://www.ros.org/r
 
 ## Build Instructions
 
+### Docker
+
+As of `v2.2.0` the `microstrain_inertial_driver` is distributed as a docker image. More information on how to use the image can be found on [DockerHub](https://hub.docker.com/r/microstrain/ros-microstrain_inertial_driver)
+
 ### Buildfarm
 
 As of `v2.0.6` this package is being built and distributed by the ROS build farm. If you do not need to modify the source, it is recommended to install directly from the buildfarm by running the following commands where `ROS_DISTRO` is the version of ROS you are using such as `foxy` or `galactic`:
