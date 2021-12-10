@@ -149,6 +149,19 @@ else()
   message(FATAL_ERROR "ROS_VERSION environment variable is not set.")
 endif()
 
+# Some ROS version specific defines
+if(DEFINED ENV{ROS_DISTRO})
+  if ("$ENV{ROS_DISTRO}" STREQUAL "rolling")
+    add_definitions(-DMICROSTRAIN_ROLLING=1)
+  elseif ("$ENV{ROS_DISTRO}" STREQUAL "galactic")
+    add_definitions(-DMICROSTRAIN_GALACTIC=1)
+  elseif ("$ENV{ROS_DISTRO}" STREQUAL "foxy")
+    add_definitions(-DMICROSTRAIN_FOXY=1)
+  else()
+    add_definitions(-DMICROSTRAIN_ROLLING=1)  # By default assume this is a newer ROS version than we support, so rolling define is the safest
+  endif()
+endif()
+
 # Allow the MSCL include directory to be accessed
 include_directories(${MSCL_INC_PATH} ${BOOST_INC_PATH})
 
