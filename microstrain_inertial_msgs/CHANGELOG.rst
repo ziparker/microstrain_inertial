@@ -2,6 +2,14 @@
 Changelog for package mscl_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* BREAKING: Updates DeviceReport.srv to return the device report instead of just printing it
+* Adds Fix Info message
+* Adds Aiding Measurement Summary message
+* Updates license files to be accurate for each package
+* Contributors: robbiefish
+
 2.2.0 (2021-12-03)
 ------------------
 * Adds set filter speed lever arm service definition to allow users to configure Measurement Speed Lever Arm at runtime with a service call
