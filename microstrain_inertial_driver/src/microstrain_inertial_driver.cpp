@@ -213,6 +213,9 @@ bool Microstrain::activate_node()
 
     if(publishers_.gnss_aiding_status_pub_[i])
       publishers_.gnss_aiding_status_pub_[i]->on_activate();
+
+    if(publishers_.gnss_fix_info_pub_[i])
+      publishers_.gnss_fix_info_pub_[i]->on_activate();
   }
 
   //RTK Data publisher
@@ -242,6 +245,9 @@ bool Microstrain::activate_node()
   if(publishers_.filter_relative_pos_pub_)
     publishers_.filter_relative_pos_pub_->on_activate();
   
+  if(publishers_.filter_aiding_measurement_summary_pub_)
+    publishers_.filter_aiding_measurement_summary_pub_->on_activate();
+
   if(publishers_.gnss_dual_antenna_status_pub_)
     publishers_.gnss_dual_antenna_status_pub_->on_activate();
   
@@ -289,6 +295,9 @@ bool Microstrain::deactivate_node()
 
     if(publishers_.gnss_aiding_status_pub_[i])
       publishers_.gnss_aiding_status_pub_[i]->on_deactivate();
+
+    if(publishers_.gnss_fix_info_pub_[i])
+      publishers_.gnss_fix_info_pub_[i]->on_deactivate();
   }
 
   //RTK Data publisher
@@ -313,6 +322,9 @@ bool Microstrain::deactivate_node()
 
   if(publishers_.filter_relative_pos_pub_)
     publishers_.filter_relative_pos_pub_->on_deactivate();
+
+  if(publishers_.filter_aiding_measurement_summary_pub_)
+    publishers_.filter_aiding_measurement_summary_pub_->on_deactivate();
 
   if(publishers_.gnss_dual_antenna_status_pub_)
     publishers_.gnss_dual_antenna_status_pub_->on_deactivate();
@@ -363,6 +375,9 @@ bool Microstrain::shutdown_or_cleanup_node()
 
     if(publishers_.gnss_aiding_status_pub_[i])
       publishers_.gnss_aiding_status_pub_[i].reset();
+
+    if(publishers_.gnss_fix_info_pub_[i])
+      publishers_.gnss_fix_info_pub_[i].reset();
   }
 
   //RTK Data publisher
@@ -387,6 +402,9 @@ bool Microstrain::shutdown_or_cleanup_node()
 
   if(publishers_.filter_relative_pos_pub_)
     publishers_.filter_relative_pos_pub_.reset();
+
+  if(publishers_.filter_aiding_measurement_summary_pub_)
+    publishers_.filter_aiding_measurement_summary_pub_.reset();
 
   if(publishers_.gnss_dual_antenna_status_pub_)
     publishers_.gnss_dual_antenna_status_pub_.reset();

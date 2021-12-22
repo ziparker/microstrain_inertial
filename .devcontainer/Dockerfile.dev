@@ -10,6 +10,7 @@ RUN set -ex \
         git \
         vim \
         curl \
+        python3-pip \
         bash-completion
 
 # Really sucks that we have to do this, but right now CMake is broken on ARM, but we can fix it if we compile it ourselves
