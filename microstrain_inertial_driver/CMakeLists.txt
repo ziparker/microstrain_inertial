@@ -190,6 +190,10 @@ install(DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(DIRECTORY ${COMMON_DIR}/config
+  DESTINATION share/${PROJECT_NAME}/${COMMON_NAME}
+)
+
 # We also have to install MSCL and it's dependencies so it can be found at runtime
 file(GLOB BOOST_LIBS "${MSCL_DIR}/Boost/lib/*")
 install(FILES ${BOOST_LIBS} ${MSCL_DIR}/libmscl.so
