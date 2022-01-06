@@ -57,6 +57,9 @@ RUN set -ex \
     && rosdep init \
     && rosdep update --rosdistro ${DOCKER_ROS_VERSION} \
     \
+    # Fix a qemu error with this package on arm?
+    && apt-get install humanity-icon-theme -y \
+    \
     # Remove any build time dependencies from the package.xml
     && find /tmp/catkin_ws/src -name "package.xml" | xargs -I{} sed -i '/.*build.*_depend.*/d' {} \
     \
@@ -86,8 +89,6 @@ RUN set -ex \
         microstrain
 USER microstrain
 
-# Users can override this file to a different launch file if they want
-ENV MICROSTRAIN_LAUNCH_FILE "/opt/ros/${DOCKER_ROS_VERSION}/share/microstrain_inertial_driver/launch/microstrain_launch.py"
-
-# Set the entrypoint to the launch file to allow the CMD to override launch params
-ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/${DOCKER_ROS_VERSION}/setup.bash && ros2 launch ${MICROSTRAIN_LAUNCH_FILE}"]
+# Add the entrypoint file and use that as the entrypoint
+COPY .devcontainer/docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
