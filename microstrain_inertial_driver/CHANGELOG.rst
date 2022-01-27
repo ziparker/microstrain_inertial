@@ -2,6 +2,16 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Only attempts to publish GNSS aiding status if the pointer has been initialized
+* Added RTK v2 support
+  * Upgraded to MSCL 63.1.0
+* Adds ability to use ROS time when populating messages
+* Fixes "does not support" logs
+* Fixed submodule initialization
+* Contributors: dacuster, robbiefish
+
 2.4.0 (2022-01-05)
 ------------------
 * BREAKING: Changes default namespace from /gx5 to / which is more generic to all usecases as customers are often not using a gx5 device
