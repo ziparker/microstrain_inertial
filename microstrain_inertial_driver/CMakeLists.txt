@@ -26,7 +26,7 @@ endif()
 
 # Download and install MSCL
 include(${COMMON_DIR}/cmake/download_mscl.cmake)
-download_mscl(VERSION "63.1.0")
+download_mscl(VERSION "64.2.2")
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
