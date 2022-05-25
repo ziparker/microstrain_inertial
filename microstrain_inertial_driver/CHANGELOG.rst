@@ -2,6 +2,21 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ROS Fixes NMEA parsing to not fail when we find certain MIP packets (`#159 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/159>`_)
+  * Fixes NMEA parsing to not fail when we find certain MIP packets
+* Runs roslint on the buildfarm (`#154 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/154>`_)
+* Fixed reporting of filter pitch and yaw when using ENU frame for ROS (`#150 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/150>`_)
+* Adds velocity covarianve for the GNSS odometry message for ROS (`#149 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/149>`_)
+* Adds ability to publish velocity in the vehicle frame for ROS (`#145 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/145>`_)
+* ROS More granular data rates (`#131 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/131>`_)
+  * Adds more granular data rates to ROS
+* ROS Check supported aiding measurements (`#140 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/140>`_)
+  * Checks if the device supports the requested aiding measurements before enabling/disabling
+* Adds ability to switch between compensated and linear acceleration for filtered IMU (`#128 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/128>`_)
+* Contributors: Lucas Walter, robbiefish
+
 2.5.1 (2022-02-15)
 ------------------
 * Configures GNSS Antenna offset even if publish_gnss* is False (`#124 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/124>`_)
