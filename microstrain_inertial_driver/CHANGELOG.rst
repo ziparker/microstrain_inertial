@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.6.0 (2022-05-25)
+------------------
 * ROS Fixes NMEA parsing to not fail when we find certain MIP packets (`#159 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/159>`_)
   * Fixes NMEA parsing to not fail when we find certain MIP packets
 * Runs roslint on the buildfarm (`#154 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/154>`_)
