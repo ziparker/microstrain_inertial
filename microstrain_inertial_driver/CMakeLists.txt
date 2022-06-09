@@ -26,7 +26,7 @@ endif()
 
 # Download and install MSCL
 include(${COMMON_DIR}/cmake/download_mscl.cmake)
-download_mscl(VERSION "64.2.2")
+download_mscl(VERSION "64.3.0")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -143,6 +143,7 @@ include_directories(${MSCL_INC_PATH} ${BOOST_INC_PATH})
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
+  yaml-cpp
   ${MSCL_LIB_PATH}
   ${catkin_LIBRARIES}
 )
