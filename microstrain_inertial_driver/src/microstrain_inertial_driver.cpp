@@ -188,10 +188,16 @@ bool Microstrain::activate_node()
   if (publishers_.device_status_pub_)
     publishers_.device_status_pub_->on_activate();
 
+  if(config_.time_reference_pub_)
+    config_.time_reference_pub_->on_activate();
+
   //IMU Publishers
   if(publishers_.imu_pub_)
     publishers_.imu_pub_->on_activate();
-   
+
+  if(publishers_.imu_time_pub_)
+    publishers_.imu_time_pub_->on_activate();
+
   if(publishers_.mag_pub_)
     publishers_.mag_pub_->on_activate();
 
@@ -277,6 +283,9 @@ bool Microstrain::deactivate_node()
   if(publishers_.imu_pub_)
     publishers_.imu_pub_->on_deactivate();
    
+  if(publishers_.imu_time_pub_)
+    publishers_.imu_time_pub_->on_deactivate();
+
   if(publishers_.mag_pub_)
     publishers_.mag_pub_->on_deactivate();
 
@@ -360,6 +369,9 @@ bool Microstrain::shutdown_or_cleanup_node()
   if(publishers_.imu_pub_)
     publishers_.imu_pub_.reset();
    
+  if(publishers_.imu_time_pub_)
+    publishers_.imu_time_pub_.reset();
+
   if(publishers_.mag_pub_)
     publishers_.mag_pub_.reset();
 
