@@ -26,7 +26,7 @@ endif()
 
 # Download and install MSCL
 include(${COMMON_DIR}/cmake/download_mscl.cmake)
-download_mscl(VERSION "64.2.2")
+download_mscl(VERSION "64.3.0")
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -58,6 +58,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(microstrain_inertial_msgs REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -168,11 +169,10 @@ include_directories(${MSCL_INC_PATH} ${BOOST_INC_PATH})
 # Linking
 target_link_libraries(${PROJECT_NAME}
   ${MSCL_LIB_PATH}
-  ${catkin_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
 )
 
 #############
