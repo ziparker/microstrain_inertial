@@ -103,6 +103,7 @@ set(NODE_SRC_FILES
 ament_package()
 
 set(LIB_SRC_FILES
+  ${COMMON_SRC_DIR}/mip_topic_mapping.cpp
   ${COMMON_SRC_DIR}/microstrain_subscribers.cpp
   ${COMMON_SRC_DIR}/microstrain_publishers.cpp
   ${COMMON_SRC_DIR}/microstrain_node_base.cpp
@@ -112,6 +113,7 @@ set(LIB_SRC_FILES
   src/microstrain_inertial_driver.cpp
 )
 set(LIB_INC_FILES
+  ${COMMON_INC_DIR}/mip_topic_mapping.h
   ${COMMON_INC_DIR}/microstrain_subscribers.h
   ${COMMON_INC_DIR}/microstrain_publishers.h
   ${COMMON_INC_DIR}/microstrain_node_base.h
