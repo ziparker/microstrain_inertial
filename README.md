@@ -83,13 +83,12 @@ We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but som
 
 2. Clone [microstrain_inertial](https://github.com/LORD-MicroStrain/microstrain_inertial.git) (ideally to your workspace or follow step 3)
 
+
 3. Move the entire microstrain_inertial folder (microstrain_inertial_driver, microstrain_inertial_msgs , and microstrain_common for just source) to the your_workspace/src directory.
 
-4. Locate and register the ros_mscl package: `rospack find microstrain_inertial_driver`
+4. Install rosdeps for this package: `rosdep install --from-paths ~/your_workspace/src --ignore-src -r -y`
 
-5. Install rosdeps for this package: `rosdep install --from-paths ~/your_workspace/src --ignore-src -r -y`
-
-6. Build your workspace:
+5. Build your workspace:
         
         cd ~/your_workspace
         catkin_make
