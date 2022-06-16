@@ -81,13 +81,15 @@ We do our best to keep ROS-MSCL up-to-date with the latest MSCL changes, but som
 #### Building from source
 1. Install ROS and create a workspace: [Installing and Configuring Your ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
 
-2. Move the entire microstrain_inertial folder (microstrain_inertial_driver, microstrain_inertial_msgs , and microstrain_common for just source) to the your_workspace/src directory.
+2. Clone [microstrain_inertial](https://github.com/LORD-MicroStrain/microstrain_inertial.git) (ideally to your workspace or follow step 3)
 
-3. Locate and register the ros_mscl package: `rospack find microstrain_inertial_driver`
+3. Move the entire microstrain_inertial folder (microstrain_inertial_driver, microstrain_inertial_msgs , and microstrain_common for just source) to the your_workspace/src directory.
 
-4. Install rosdeps for this package: `rosdep install --from-paths ~/your_workspace/src --ignore-src -r -y`
+4. Locate and register the ros_mscl package: `rospack find microstrain_inertial_driver`
 
-5. Build your workspace:
+5. Install rosdeps for this package: `rosdep install --from-paths ~/your_workspace/src --ignore-src -r -y`
+
+6. Build your workspace:
         
         cd ~/your_workspace
         catkin_make
@@ -134,10 +136,12 @@ The easiest way to develop in docker while still using an IDE is to use VSCode a
 1. Open VSCode and install the following [plugins](https://code.visualstudio.com/docs/editor/extension-marketplace):
     1. [VSCode Docker plugin](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
     1. [VSCode Remote Containers plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-1. Open this directory in a container by following [this guide](https://code.visualstudio.com/docs/remote/containers#_quick-start-open-an-existing-folder-in-a-container)
-    1. Due to a bug in the remote container plugin, you will need to refresh the window once it comes up. To do this, type `Ctrl+Shift+p` and type `Reload Window` and hit enter. Note that this will have to be repeated every time the container is rebuilt
+1. Open directory in a container:
+    1. Open this project's directory (`microstrain_inertial`) in VSCode
+    1. Click green `><` "Open a Remote Window" button in lower lefthand corner of VSCode
+    2. Select "Reopen in Container"
+    3. Due to a bug in the remote container plugin, you will need to refresh the window once it comes up. To do this, type `Ctrl+Shift+p` and type `Reload Window` and hit enter. Note that this will have to be repeated every time the container is rebuilt
 1. Once the folder is open in VSCode, you can build the project by running `Ctrl+Shift+B` to trigger a build, or `Ctrl+p` to open quick open, then type `task build` and hit enter
-1. You can run the project by following [this guide](https://code.visualstudio.com/docs/editor/debugging)
 
 ### Make
 
