@@ -184,82 +184,6 @@ bool Microstrain::activate_node()
         &Microstrain::parse_and_publish_aux_wrapper, this);
   }
 
-  //Activate publishers
-  if (publishers_.device_status_pub_)
-    publishers_.device_status_pub_->on_activate();
-
-  if(config_.time_reference_pub_)
-    config_.time_reference_pub_->on_activate();
-
-  //IMU Publishers
-  if(publishers_.imu_pub_)
-    publishers_.imu_pub_->on_activate();
-
-  if(publishers_.imu_time_pub_)
-    publishers_.imu_time_pub_->on_activate();
-
-  if(publishers_.mag_pub_)
-    publishers_.mag_pub_->on_activate();
-
-  if(publishers_.gps_corr_pub_)
-    publishers_.gps_corr_pub_->on_activate();
- 
- 
-  //GNSS Publishers
-  for(int i=0; i< NUM_GNSS; i++)
-  {
-    if(publishers_.gnss_pub_[i])
-      publishers_.gnss_pub_[i]->on_activate();
-  
-    if(publishers_.gnss_odom_pub_[i])
-      publishers_.gnss_odom_pub_[i]->on_activate();
-
-    if(publishers_.gnss_time_pub_[i])
-      publishers_.gnss_time_pub_[i]->on_activate();
-
-    if(publishers_.gnss_aiding_status_pub_[i])
-      publishers_.gnss_aiding_status_pub_[i]->on_activate();
-
-    if(publishers_.gnss_fix_info_pub_[i])
-      publishers_.gnss_fix_info_pub_[i]->on_activate();
-  }
-
-  //RTK Data publishers
-  if(publishers_.rtk_pub_)
-    publishers_.rtk_pub_->on_activate();
-
-  if(publishers_.rtk_pub_v1_)
-    publishers_.rtk_pub_v1_->on_activate();
-  
-  //NMEA publisher
-  if (publishers_.nmea_sentence_pub_)
-    publishers_.nmea_sentence_pub_->on_activate();
-
-  //Filter Publishers
-  if(publishers_.filter_status_pub_)
-    publishers_.filter_status_pub_->on_activate();
-
-  if(publishers_.filter_heading_pub_)
-    publishers_.filter_heading_pub_->on_activate();
-
-  if(publishers_.filter_heading_state_pub_)
-    publishers_.filter_heading_state_pub_->on_activate();
-
-  if(publishers_.filter_pub_)
-    publishers_.filter_pub_->on_activate();
-
-  if(publishers_.filtered_imu_pub_)
-    publishers_.filtered_imu_pub_->on_activate();
-
-  if(publishers_.filter_relative_pos_pub_)
-    publishers_.filter_relative_pos_pub_->on_activate();
-  
-  if(publishers_.filter_aiding_measurement_summary_pub_)
-    publishers_.filter_aiding_measurement_summary_pub_->on_activate();
-
-  if(publishers_.gnss_dual_antenna_status_pub_)
-    publishers_.gnss_dual_antenna_status_pub_->on_activate();
-  
   return true;
 }
 
@@ -269,81 +193,11 @@ bool Microstrain::activate_node()
 
 bool Microstrain::deactivate_node()
 {
-  //Deactivate the base node
+  // Deactivate the base node
   if (!MicrostrainNodeBase::deactivate())
   {
     RCLCPP_ERROR(this->get_logger(), "Unable to deactivate node base");
   }
-
-  //Deactivate publishers
-  if (publishers_.device_status_pub_)
-    publishers_.device_status_pub_->on_deactivate();
- 
-  //IMU Publishers
-  if(publishers_.imu_pub_)
-    publishers_.imu_pub_->on_deactivate();
-   
-  if(publishers_.imu_time_pub_)
-    publishers_.imu_time_pub_->on_deactivate();
-
-  if(publishers_.mag_pub_)
-    publishers_.mag_pub_->on_deactivate();
-
-  if(publishers_.gps_corr_pub_)
-    publishers_.gps_corr_pub_->on_deactivate();
- 
- 
-  //GNSS Publishers
-  for(int i=0; i< NUM_GNSS; i++)
-  {
-    if(publishers_.gnss_pub_[i])
-      publishers_.gnss_pub_[i]->on_deactivate();
-  
-    if(publishers_.gnss_odom_pub_[i])
-      publishers_.gnss_odom_pub_[i]->on_deactivate();
-
-    if(publishers_.gnss_time_pub_[i])
-      publishers_.gnss_time_pub_[i]->on_deactivate();
-
-    if(publishers_.gnss_aiding_status_pub_[i])
-      publishers_.gnss_aiding_status_pub_[i]->on_deactivate();
-
-    if(publishers_.gnss_fix_info_pub_[i])
-      publishers_.gnss_fix_info_pub_[i]->on_deactivate();
-  }
-
-  //RTK Data publishers
-  if(publishers_.rtk_pub_)
-    publishers_.rtk_pub_->on_deactivate();
-
-  if(publishers_.rtk_pub_v1_)
-    publishers_.rtk_pub_v1_->on_deactivate();
-  
-  //Filter Publishers
-  if(publishers_.filter_status_pub_)
-    publishers_.filter_status_pub_->on_deactivate();
-
-  if(publishers_.filter_heading_pub_)
-    publishers_.filter_heading_pub_->on_deactivate();
-
-  if(publishers_.filter_heading_state_pub_)
-    publishers_.filter_heading_state_pub_->on_deactivate();
-
-  if(publishers_.filter_pub_)
-    publishers_.filter_pub_->on_deactivate();
-
-  if(publishers_.filtered_imu_pub_)
-    publishers_.filtered_imu_pub_->on_deactivate();
-
-  if(publishers_.filter_relative_pos_pub_)
-    publishers_.filter_relative_pos_pub_->on_deactivate();
-
-  if(publishers_.filter_aiding_measurement_summary_pub_)
-    publishers_.filter_aiding_measurement_summary_pub_->on_deactivate();
-
-  if(publishers_.gnss_dual_antenna_status_pub_)
-    publishers_.gnss_dual_antenna_status_pub_->on_deactivate();
-
   return true;
 }
 
@@ -360,76 +214,6 @@ bool Microstrain::shutdown_or_cleanup_node()
     // Even though this is an error, don't return a failure on shutdown as it is not a fatal error
     RCLCPP_ERROR(this->get_logger(), "Failed to shutdown base node");
   }
-
-  //Release publishers
-  if (publishers_.device_status_pub_)
-    publishers_.device_status_pub_.reset();
-
-  //IMU Publishers
-  if(publishers_.imu_pub_)
-    publishers_.imu_pub_.reset();
-   
-  if(publishers_.imu_time_pub_)
-    publishers_.imu_time_pub_.reset();
-
-  if(publishers_.mag_pub_)
-    publishers_.mag_pub_.reset();
-
-  if(publishers_.gps_corr_pub_)
-    publishers_.gps_corr_pub_.reset();
- 
- 
-  //GNSS Publishers
-  for(int i=0; i< NUM_GNSS; i++)
-  {
-    if(publishers_.gnss_pub_[i])
-      publishers_.gnss_pub_[i].reset();
-  
-    if(publishers_.gnss_odom_pub_[i])
-      publishers_.gnss_odom_pub_[i].reset();
-
-    if(publishers_.gnss_time_pub_[i])
-      publishers_.gnss_time_pub_[i].reset();
-
-    if(publishers_.gnss_aiding_status_pub_[i])
-      publishers_.gnss_aiding_status_pub_[i].reset();
-
-    if(publishers_.gnss_fix_info_pub_[i])
-      publishers_.gnss_fix_info_pub_[i].reset();
-  }
-
-  //RTK Data publishers
-  if(publishers_.rtk_pub_)
-    publishers_.rtk_pub_.reset();
-
-  if(publishers_.rtk_pub_v1_)
-    publishers_.rtk_pub_v1_.reset();
-  
-  //Filter Publishers
-  if(publishers_.filter_status_pub_)
-    publishers_.filter_status_pub_.reset();
-
-  if(publishers_.filter_heading_pub_)
-    publishers_.filter_heading_pub_.reset();
-
-  if(publishers_.filter_heading_state_pub_)
-    publishers_.filter_heading_state_pub_.reset();
-
-  if(publishers_.filter_pub_)
-    publishers_.filter_pub_.reset();
-
-  if(publishers_.filtered_imu_pub_)
-    publishers_.filtered_imu_pub_.reset();
-
-  if(publishers_.filter_relative_pos_pub_)
-    publishers_.filter_relative_pos_pub_.reset();
-
-  if(publishers_.filter_aiding_measurement_summary_pub_)
-    publishers_.filter_aiding_measurement_summary_pub_.reset();
-
-  if(publishers_.gnss_dual_antenna_status_pub_)
-    publishers_.gnss_dual_antenna_status_pub_.reset();
-
   return true;
 }
 
@@ -464,6 +248,7 @@ void Microstrain::parse_and_publish_aux_wrapper()
 void Microstrain::device_status_wrapper()
 {
   // call the device status function in a try catch block so we can transition the state instead of crashing when an error happens
+  /*
   try
   {
     publishers_.publishDeviceStatus();
@@ -473,6 +258,7 @@ void Microstrain::device_status_wrapper()
     RCLCPP_ERROR(this->get_logger(), "Error during processing: %s", e.what());
     handle_exception();
   }
+  */
 }
 
 void Microstrain::handle_exception()
