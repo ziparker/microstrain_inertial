@@ -37,6 +37,14 @@ namespace microstrain
 
 Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
 {
+  // Configure the logger
+#if MICROSTRAIN_ROLLING == 1 || MICROSTRAIN_HUMBLE == 1 || MICROSTRAIN_GALACTIC == 1
+  if (std::string(std::getenv("MICROSTRAIN_INERTIAL_DEBUG")) == "true")
+    get_logger().set_level(rclcpp::Logger::Level::Debug);
+#else
+  RCLCPP_INFO(this->get_logger(), "This version of ROS2 does not support changing the log level in C++");
+#endif
+
   //Initialize the helper classes
   if (!MicrostrainNodeBase::initialize(this))
     RCLCPP_FATAL(this->get_logger(), "Failed to initialize base node");
@@ -132,7 +140,8 @@ bool Microstrain::configure_node()
   //Main loop setup
   ///
   ///////////////////////////////////////////////////////////////////////////
-  try {
+  try
+  {
     RCLCPP_DEBUG(this->get_logger(), "Initializing base node");
     if (!MicrostrainNodeBase::configure(this))
     {
@@ -145,7 +154,6 @@ bool Microstrain::configure_node()
     RCLCPP_ERROR(this->get_logger(), "Error: Device Disconnected");
     return false;
   }
-
   catch(const mscl::Error &e)
   {
     RCLCPP_ERROR(this->get_logger(), "Error: %s", e.what());
@@ -175,6 +183,11 @@ bool Microstrain::activate_node()
       &Microstrain::parse_and_publish_main_wrapper, this);
   device_status_timer_ = create_timer<Microstrain>(node_, 1.0,
       &Microstrain::device_status_wrapper, this);
+
+  // Start a timer to log debug information if debug is enabled
+  if (config_.debug_)
+    log_debug_timer_ = create_timer<Microstrain>(node_, 1.0,
+        &Microstrain::logDeviceDebugInfo, this);
 
   // Start the aux timer if we were requested to do so
   if (config_.supports_rtk_ && config_.publish_nmea_)
