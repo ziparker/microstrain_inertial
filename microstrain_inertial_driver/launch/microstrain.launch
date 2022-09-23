@@ -53,6 +53,9 @@
 
     <!-- If you want to override any settings specified in the params.yml file, make a new yaml file, and set the value via the params_file arg -->
     <rosparam file="$(arg params_file)" command="load" unless="$(eval arg('params_file') == '')" />
+
+    <!-- Supported overrides -->
+    <param name="debug" value="$(arg debug)" type="bool" />
   </node>
 
 </launch>
