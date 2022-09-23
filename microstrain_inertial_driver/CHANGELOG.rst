@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.7.0 (2022-09-23)
+------------------
 * ROS2 serial improvements (`#177 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/178>`_)
   * Adds logging loop every second that will print the number of bytes read and written
   * Adds ability to configure the baudrate on the device using `set_baud`
