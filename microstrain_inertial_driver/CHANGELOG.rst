@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.7.1 (2022-11-09)
+------------------
 * Updates submodule with CV7 mag aiding bugfix (`#188 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/188>`_)
 * Enable usage of substitution arguments in override params YAML file. (`#187 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/187>`_)
 * ROS Do not error when the device does not support antenna offset or S2V commands (`#182 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/182>`_)
