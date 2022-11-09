@@ -1,9 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Parker-Lord GX5-Series Driver Definition File
+// Parker-Lord Driver Definition File
 //
 // Copyright (c) 2017, Brian Bingham
-// Copyright (c)  2020, Parker Hannifin Corp
+// Copyright (c) 2020, Parker Hannifin Corp
 //
 // This code is licensed under MIT license (see LICENSE file for details)
 //
@@ -18,7 +18,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "microstrain_inertial_driver_common/microstrain_node_base.h"
+#include "microstrain_inertial_driver_common/node_common.h"
 
 namespace microstrain
 {
@@ -26,7 +26,7 @@ namespace microstrain
 /**
  * Implements node functionality for microstrain inertial node
  */
-class Microstrain : public MicrostrainNodeBase
+class Microstrain : public NodeCommon
 {
 public:
   /**

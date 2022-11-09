@@ -1,18 +1,38 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(microstrain_inertial_driver)
 
+# C++ 14 required
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Force some options for this module and the MIP SDK
+set(BUILD_SHARED_LIBS_TEMP "${BUILD_SHARED_LIBS}")
+set(BUILD_EXAMPLES_TEMP "${BUILD_EXAMPLES}")
+set(BUILD_TESTING_TEMP "${BUILD_TESTING}")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+
 # Locate the common code and messages
 set(COMMON_NAME "microstrain_inertial_driver_common")
 set(COMMON_DIR "${${PROJECT_NAME}_SOURCE_DIR}/${COMMON_NAME}")
 set(COMMON_SRC_DIR "${COMMON_DIR}/src")
 set(COMMON_INC_DIR "${COMMON_DIR}/include/${COMMON_NAME}")
 
+set(MIP_SDK_DIR "${COMMON_DIR}/mip_sdk")
+set(MIP_SDK_SRC_DIR "${MIP_SDK_DIR}/src")
+
+# Some helpful options for debugging
+add_compile_options($<$<CONFIG:DEBUG>:-ggdb>)
+
+# Try to find Git
+find_package(Git)
+
 # Make sure that the submodule has been properly initialized
 if(NOT EXISTS "${COMMON_SRC_DIR}")
   message(STATUS "Initializing ${COMMON_DIR} submodule. This should only happen once.")
 
   # Make sure we can find the git executable
-  find_package(Git)
   if(NOT Git_FOUND)
     message(FATAL_ERROR "Unable to initialize submodule because we could not find the git executable. Please clone this repo using 'git clone --recursive'")
   endif()
@@ -24,9 +44,32 @@ if(NOT EXISTS "${COMMON_SRC_DIR}")
   )
 endif()
 
-# Download and install MSCL
-include(${COMMON_DIR}/cmake/download_mscl.cmake)
-download_mscl(VERSION "64.2.2")
+# Use Git to find the version
+set(DEFAULT_DRIVER_GIT_VERSION "unknown")
+if(NOT GIT_FOUND)
+  message(STATUS "Unable to find git, will build with unknown version")
+  set(DRIVER_GIT_VERSION ${DEFAULT_DRIVER_GIT_VERSION})
+else()
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E env ${GIT_EXECUTABLE} describe --tags
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE DRIVER_GIT_VERSION_OUT
+    ERROR_VARIABLE DRIVER_GIT_VERSION_ERR
+    RESULT_VARIABLE DRIVER_GIT_VERSION_RET
+  )
+  if(NOT ${DRIVER_GIT_VERSION_RET} EQUAL 0)
+    message(STATUS "Unable to determine version from Git, defaulting to version ${DEFAULT_DRIVER_GIT_VERSION}")
+    set(DRIVER_GIT_VERSION ${DEFAULT_DRIVER_GIT_VERSION})
+  else()
+    set(DRIVER_GIT_VERSION ${DRIVER_GIT_VERSION_OUT})
+    string(REGEX REPLACE "\n" "" DRIVER_GIT_VERSION "${DRIVER_GIT_VERSION}")
+    message(STATUS "Microstrain Driver Version: ${DRIVER_GIT_VERSION}")
+  endif()
+endif()
+
+# Include the MIP SDK source
+add_subdirectory("${MIP_SDK_DIR}" EXCLUDE_FROM_ALL)
+include_directories("${MIP_SDK_SRC_DIR}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -89,25 +132,40 @@ add_definitions(-std=c++11)
 set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
 
 set(LIB_SRC_FILES
-  ${COMMON_SRC_DIR}/microstrain_subscribers.cpp
-  ${COMMON_SRC_DIR}/microstrain_publishers.cpp
-  ${COMMON_SRC_DIR}/microstrain_node_base.cpp
-  ${COMMON_SRC_DIR}/microstrain_services.cpp
-  ${COMMON_SRC_DIR}/microstrain_parser.cpp
-  ${COMMON_SRC_DIR}/microstrain_config.cpp
+  ${COMMON_SRC_DIR}/subscribers.cpp
+  ${COMMON_SRC_DIR}/publishers.cpp
+  ${COMMON_SRC_DIR}/node_common.cpp
+  ${COMMON_SRC_DIR}/services.cpp
+  ${COMMON_SRC_DIR}/config.cpp
+
+  ${COMMON_SRC_DIR}/utils/mappings/mip_publisher_mapping.cpp
+
+  ${COMMON_SRC_DIR}/utils/mip/ros_mip_device.cpp
+  ${COMMON_SRC_DIR}/utils/mip/ros_mip_device_main.cpp
+  ${COMMON_SRC_DIR}/utils/mip/ros_mip_device_aux.cpp
+  ${COMMON_SRC_DIR}/utils/mip/ros_connection.cpp
+
   src/microstrain_inertial_driver.cpp
 )
 set(LIB_INC_FILES
-  ${COMMON_INC_DIR}/microstrain_subscribers.h
-  ${COMMON_INC_DIR}/microstrain_publishers.h
-  ${COMMON_INC_DIR}/microstrain_node_base.h
-  ${COMMON_INC_DIR}/microstrain_services.h
-  ${COMMON_INC_DIR}/microstrain_parser.h
-  ${COMMON_INC_DIR}/microstrain_config.h
-  ${COMMON_INC_DIR}/microstrain_defs.h
-  ${COMMON_INC_DIR}/microstrain_ros_funcs.h
+  ${COMMON_INC_DIR}/subscribers.h
+  ${COMMON_INC_DIR}/publishers.h
+  ${COMMON_INC_DIR}/node_common.h
+  ${COMMON_INC_DIR}/services.h
+  ${COMMON_INC_DIR}/config.h
+  ${COMMON_INC_DIR}/utils/ros_compat.h
+
+  ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
+  ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
+
+  ${COMMON_INC_DIR}/utils/mip/ros_mip_device.h
+  ${COMMON_INC_DIR}/utils/mip/ros_mip_device_main.h
+  ${COMMON_INC_DIR}/utils/mip/ros_mip_device_aux.h
+  ${COMMON_INC_DIR}/utils/mip/ros_connection.h
+
   include/${PROJECT_NAME}/microstrain_inertial_driver.h
 )
+
 add_library(${PROJECT_NAME} ${LIB_SRC_FILES} ${LIB_INC_FILES})
 add_dependencies(${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
@@ -131,6 +189,13 @@ set(NODE_INC_FILES
 )
 add_executable(${PROJECT_NAME}_node ${NODE_SRC_FILES} ${NODE_INC_FILES})
 
+# Annoying, but the ROS types don't match up with the MIP types for floats and doubles, so ignore those warnings for now
+set_source_files_properties(${COMMON_SRC_DIR}/services.cpp PROPERTIES COMPILE_FLAGS "-Wno-narrowing")
+set_source_files_properties(${COMMON_SRC_DIR}/services.cpp PROPERTIES COMPILE_OPTIONS "-Wno-narrowing")
+
+# Tell the code the version of the driver that is being build
+add_definitions(-DMICROSTRAIN_DRIVER_VERSION="${DRIVER_GIT_VERSION}")
+
 # Let the code know if it is being compiled with ROS1 or ROS2
 if(DEFINED ENV{ROS_VERSION})
   add_definitions(-DMICROSTRAIN_ROS_VERSION=$ENV{ROS_VERSION})
@@ -143,8 +208,8 @@ include_directories(${MSCL_INC_PATH} ${BOOST_INC_PATH})
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
-  ${MSCL_LIB_PATH}
   ${catkin_LIBRARIES}
+  mip
 )
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
@@ -155,7 +220,7 @@ target_link_libraries(${PROJECT_NAME}_node
 ## Install ##
 #############
 
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
+install(TARGETS ${PROJECT_NAME}_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -170,11 +235,10 @@ install(DIRECTORY ${COMMON_DIR}/config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${COMMON_NAME}
 )
 
-# We also have to install MSCL and it's dependencies so it can be found at runtime
-file(GLOB BOOST_LIBS "${MSCL_DIR}/Boost/lib/*")
-install(FILES ${BOOST_LIBS} ${MSCL_DIR}/libmscl.so
-  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-)
+# Reset the forced options
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "${BUILD_SHARED_LIBS_TEMP}" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "${BUILD_EXAMPLES_TEMP}" FORCE)
+set(BUILD_TESTING OFF CACHE BOOL "${BUILD_TESTING_TEMP}" FORCE)
 
 #############
 ## Testing ##
@@ -182,6 +246,7 @@ install(FILES ${BOOST_LIBS} ${MSCL_DIR}/libmscl.so
 
 # build/c++11 and whitespace/braces only trip on the buildfarm which is melodic, maybe it's not needed in noetic?
 set(ROSLINT_CPP_OPTS "--filter=-whitespace/line_length,-runtime/references,-readability/fn_size,-whitespace/parens,-build/c++11,-whitespace/braces")
-roslint_cpp()
+get_target_property(ROSLINT_SOURCES ${PROJECT_NAME} SOURCES)
+roslint_cpp(${ROSLINT_SOURCES})
 
 roslint_add_test()
