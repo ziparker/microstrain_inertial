@@ -2,7 +2,7 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+2.7.1 (2022-11-09)
 ------------------
 * Updates submodule with CV7 mag aiding bugfix (`#188 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/188>`_)
 * Enable usage of substitution arguments in override params YAML file. (`#187 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/187>`_)
