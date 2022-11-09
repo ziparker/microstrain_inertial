@@ -1,9 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Parker-Lord ROS2 Inertial Driver Definition File
+// Parker-Lord Driver Definition File
 // 
 // Copyright (c) 2017, Brian Bingham
-// Copyright (c)  2021, Parker Hannifin Corp
+// Copyright (c) 2021, Parker Hannifin Corp
 // 
 // This code is licensed under MIT license (see LICENSE file for details)
 // 
@@ -13,12 +13,6 @@
 #ifndef _MICROSTRAIN_3DM_H
 #define _MICROSTRAIN_3DM_H
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Include Files
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
 #include <cstdio>
 #include <unistd.h>
 #include <time.h>
@@ -26,13 +20,7 @@
 #include <fstream>
 #include <functional>
 
-#include "microstrain_inertial_driver_common/microstrain_node_base.h"
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// \brief Contains functions for micostrain driver
-///
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "microstrain_inertial_driver_common/node_common.h"
 
 namespace microstrain 
 {
@@ -40,7 +28,7 @@ namespace microstrain
 ///
 /// \brief Microstrain class
 ///
-class Microstrain : public rclcpp_lifecycle::LifecycleNode, public MicrostrainNodeBase
+class Microstrain : public rclcpp_lifecycle::LifecycleNode, public NodeCommon
 {
  public:
   Microstrain();
@@ -59,7 +47,6 @@ class Microstrain : public rclcpp_lifecycle::LifecycleNode, public MicrostrainNo
 
   void parse_and_publish_main_wrapper();
   void parse_and_publish_aux_wrapper();
-  void device_status_wrapper();
 
  private:
 
@@ -73,9 +60,9 @@ template<typename Object, void (Object::*Callback)()>
 RosTimerType Microstrain::create_timer_wrapper(double rate_hz)
 {
 #ifdef MICROSTRAIN_ROLLING
-  return create_timer(std::chrono::duration<double, std::milli>(1 / rate_hz), std::bind(Callback, this));
+  return createTimer(std::chrono::duration<double, std::milli>(1 / rate_hz), std::bind(Callback, this));
 #else
-  return create_timer<Microstrain>(node_, rate_hz, Callback, this);
+  return createTimer<Microstrain>(node_, rate_hz, Callback, this);
 #endif
 }
 
