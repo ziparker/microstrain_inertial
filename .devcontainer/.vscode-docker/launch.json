@@ -5,18 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "microstrain launch",
+            "name": "C++ Debugger",
             "request": "launch",
-            "target": "/home/microstrain/src/ros_mscl/launch/microstrain.launch",
-            "type": "ros",
-            "preLaunchTask": "build"
-        },
-        {
-            "name": "example launch",
-            "request": "launch",
-            "target": "/home/microstrain/src/Examples/ros_mscl_cpp_example/launch/listener.launch",
-            "type": "ros",
-            "preLaunchTask": "build"
+            "type": "cppdbg",
+            "miDebuggerServerAddress": "localhost:3000",
+            "cwd": "/",
+            "program": "/home/microstrain/catkin_ws/install/microstrain_inertial_driver/lib/microstrain_inertial_driver/microstrain_inertial_driver_node"
         }
     ]
 }

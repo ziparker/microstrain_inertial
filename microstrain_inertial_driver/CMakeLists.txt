@@ -24,7 +24,7 @@ set(MIP_SDK_DIR "${COMMON_DIR}/mip_sdk")
 set(MIP_SDK_SRC_DIR "${MIP_SDK_DIR}/src")
 
 # Some helpful options for debugging
-add_compile_options($<$<CONFIG:DEBUG>:-ggdb>)
+add_compile_options(-ggdb)
 
 # Try to find Git
 find_package(Git)
