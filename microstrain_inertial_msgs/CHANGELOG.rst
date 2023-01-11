@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2023-01-11)
+------------------
 * Adds IMU overrange status publishers for ROS (`#207 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/207>`_)
   * Adds IMU overrange status publishers for ROS
 * Adds RF error detection publishers for ROS (`#206 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/206>`_)
