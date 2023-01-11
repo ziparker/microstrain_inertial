@@ -2,6 +2,30 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixes for devices that do not support the extended descriptor set command in ROS (`#216 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/216>`_)
+  * Fixes for devices that do not support the extended descriptor set command in ROS
+* Validates that all publishers are documented on the wiki for ROS (`#211 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/211>`_)
+  * Fixes time_ref topics and validates that wiki has all publishers documented
+* Adds IMU overrange status publishers for ROS (`#207 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/207>`_)
+  * Adds IMU overrange status publishers for ROS
+* Adds RF error detection publishers for ROS (`#206 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/206>`_)
+  * Adds RF error detection to ROS
+* Adds SBAS info publishers for ROS (`#204 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/204>`_)
+  * Adds SBAS info publishers for ROS
+* Adds SBAS settings support to ROS (`#202 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/202>`_)
+  * Adds SBAS settings support to ROS
+* ROS Implements the filter lever arm offset command (`#196 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/196>`_)
+  * Adds ability to configure filter lever arm offset
+* Feature/ros nmea main port (`#192 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/192>`_)
+  * Adds ability to parse and publish NMEA from the main port
+* Feature/ros mip sdk (`#191 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/191>`_)
+  * Converts to use the mip_sdk instead of MSCL
+  * BREAKING Removes publish_* configuration options and instead relies on more granular *_data_rate options to enable/disable data streams
+  * Switches to compile as a static binary
+* Contributors: Rob
+
 2.7.1 (2022-11-09)
 ------------------
 * Updates submodule with CV7 mag aiding bugfix (`#188 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/188>`_)

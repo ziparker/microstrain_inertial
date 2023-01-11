@@ -2,6 +2,17 @@
 Changelog for package microstrain_inertial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Adds IMU overrange status publishers for ROS (`#207 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/207>`_)
+  * Adds IMU overrange status publishers for ROS
+* Adds RF error detection publishers for ROS (`#206 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/206>`_)
+  * Adds RF error detection to ROS
+* Adds SBAS info publishers for ROS (`#204 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/204>`_)
+  * Adds SBAS info publishers for ROS
+  * Updates submodule to main
+* Contributors: Rob
+
 2.7.1 (2022-11-09)
 ------------------
 
