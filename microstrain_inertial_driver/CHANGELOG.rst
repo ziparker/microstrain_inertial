@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2023-01-11)
+------------------
 * Fixes for devices that do not support the extended descriptor set command in ROS (`#216 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/216>`_)
   * Fixes for devices that do not support the extended descriptor set command in ROS
 * Validates that all publishers are documented on the wiki for ROS (`#211 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/211>`_)
