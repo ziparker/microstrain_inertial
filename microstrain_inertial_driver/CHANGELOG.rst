@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.1 (2023-02-10)
+------------------
 * Publishes after every packet to fix lower data rate problem (`#229 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/229>`_)
   * Publishes after every packet to fix lower data rate problem
 * Updates submodule with microseconds to nanoseconds fix (`#227 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/227>`_)
