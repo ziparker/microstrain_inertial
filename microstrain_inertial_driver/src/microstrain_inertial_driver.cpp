@@ -31,7 +31,8 @@ Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
 {
   // Configure the logger
 #if MICROSTRAIN_ROLLING == 1 || MICROSTRAIN_HUMBLE == 1 || MICROSTRAIN_GALACTIC == 1
-  if (std::string(std::getenv("MICROSTRAIN_INERTIAL_DEBUG")) == "true")
+  auto debug_enable = std::getenv("MICROSTRAIN_INERTIAL_DEBUG");
+  if (debug_enable != nullptr && std::string(debug_enable) == "true")
     get_logger().set_level(rclcpp::Logger::Level::Debug);
 #else
   RCLCPP_INFO(this->get_logger(), "This version of ROS2 does not support changing the log level in C++");
