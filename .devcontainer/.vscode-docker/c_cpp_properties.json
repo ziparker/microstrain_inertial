@@ -3,6 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "/usr/include/**",
                 "/usr/local/include/**",
                 "${workspaceFolder}/**",
                 "/opt/ros/**"

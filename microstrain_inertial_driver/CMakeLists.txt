@@ -92,6 +92,9 @@ find_package(catkin REQUIRED COMPONENTS
   microstrain_inertial_msgs
 )
 
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIRS})
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -155,6 +158,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/services.h
   ${COMMON_INC_DIR}/config.h
   ${COMMON_INC_DIR}/utils/ros_compat.h
+  ${COMMON_INC_DIR}/utils/geodetic_converter.h
 
   ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
   ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
