@@ -2,6 +2,15 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.1 (2023-02-10)
+------------------
+* Publishes after every packet to fix lower data rate problem (`#229 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/229>`_)
+  * Publishes after every packet to fix lower data rate problem
+* Updates submodule with microseconds to nanoseconds fix (`#227 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/227>`_)
+* ROS Fixes odom data rate mapping to refer to the correct topic (`#224 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/224>`_)
+  * Fixes odom data rate mapping to refer to the correct topic
+* Contributors: Rob
+
 3.0.0 (2023-01-11)
 ------------------
 * Fixes for devices that do not support the extended descriptor set command in ROS (`#216 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/216>`_)

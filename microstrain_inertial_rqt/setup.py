@@ -2,7 +2,7 @@ from distutils.core import setup
 from catkin_pkg.python_setup import generate_distutils_setup
   
 d = generate_distutils_setup(
-    packages=['microstrain_inertial_rqt'],
+    packages=['microstrain_inertial_rqt', 'microstrain_inertial_rqt.utils'],
     package_dir={'': 'microstrain_inertial_rqt_common/src'},
 )
 
