@@ -88,7 +88,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   tf2_geometry_msgs
-  diagnostic_updater
   microstrain_inertial_msgs
 )
 
@@ -177,20 +176,12 @@ add_dependencies(${PROJECT_NAME}
   ${catkin_EXPORTED_TARGETS}
 )
 
-add_library(microstrain_diagnostic_updater src/microstrain_diagnostic_updater.cpp)
-add_dependencies(microstrain_diagnostic_updater
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-)
-
 # Executables
 set(NODE_SRC_FILES
   src/microstrain_inertial_driver_node.cpp
-  src/microstrain_diagnostic_updater.cpp
 )
 set(NODE_INC_FILES
   include/${PROJECT_NAME}/microstrain_inertial_driver.h
-  include/${PROJECT_NAME}/microstrain_diagnostic_updater.h
 )
 add_executable(${PROJECT_NAME}_node ${NODE_SRC_FILES} ${NODE_INC_FILES})
 
