@@ -130,8 +130,11 @@ ament_export_dependencies(
 ## Build ##
 ###########
 
+# Find some less ROS-y packages
+find_package(Eigen3 REQUIRED)
+
 # Add the catkin includes
-include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
+include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include ${EIGEN3_INCLUDE_DIRS})
 
 # Only lint the ROS2 code as the ROS1 code is linted through ROS1 and having two competing standards would make things messy quick
 set(NODE_SRC_FILES
@@ -164,6 +167,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/services.h
   ${COMMON_INC_DIR}/config.h
   ${COMMON_INC_DIR}/utils/ros_compat.h
+  ${COMMON_INC_DIR}/utils/geodetic_converter.h
 
   ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
   ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
