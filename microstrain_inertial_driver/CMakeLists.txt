@@ -150,6 +150,8 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/services.cpp
   ${COMMON_SRC_DIR}/config.cpp
 
+  ${COMMON_SRC_DIR}/utils/clock_bias_monitor.cpp
+
   ${COMMON_SRC_DIR}/utils/mappings/mip_mapping.cpp
   ${COMMON_SRC_DIR}/utils/mappings/mip_publisher_mapping.cpp
 
@@ -168,6 +170,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/config.h
   ${COMMON_INC_DIR}/utils/ros_compat.h
   ${COMMON_INC_DIR}/utils/geodetic_converter.h
+  ${COMMON_INC_DIR}/utils/clock_bias_monitor.h
 
   ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
   ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
