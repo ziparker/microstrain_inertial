@@ -91,8 +91,13 @@ find_package(catkin REQUIRED COMPONENTS
   microstrain_inertial_msgs
 )
 
+# Find some less ROS-y packages
+list(APPEND CMAKE_MODULE_PATH "/usr/share/cmake/geographiclib/")
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIRS})
+find_package(GeographicLib REQUIRED)
+
+# We want to use the static library for libgeographic, but it doesn't seem to find it for us, so substitute it here
+string(REGEX REPLACE "[.]so[^\\/\\s]*$" ".a" GeographicLib_LIBRARIES ${GeographicLib_LIBRARIES})
 
 ###################################
 ## catkin specific configuration ##
@@ -127,7 +132,13 @@ catkin_package(
 ###########
 
 # Add the catkin includes
-include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
+include_directories(
+  include
+  ${COMMON_DIR}/include
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
+  ${GeographicLib_INCLUDE_DIRS}
+)
 
 # Set some general CMake flags
 add_definitions(-std=c++11)
@@ -139,6 +150,7 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/node_common.cpp
   ${COMMON_SRC_DIR}/services.cpp
   ${COMMON_SRC_DIR}/config.cpp
+  ${COMMON_SRC_DIR}/utils/clock_bias_monitor.cpp
 
   ${COMMON_SRC_DIR}/utils/mappings/mip_mapping.cpp
   ${COMMON_SRC_DIR}/utils/mappings/mip_publisher_mapping.cpp
@@ -157,7 +169,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/services.h
   ${COMMON_INC_DIR}/config.h
   ${COMMON_INC_DIR}/utils/ros_compat.h
-  ${COMMON_INC_DIR}/utils/geodetic_converter.h
+  ${COMMON_INC_DIR}/utils/clock_bias_monitor.h
 
   ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
   ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
@@ -210,6 +222,7 @@ target_link_libraries(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  ${GeographicLib_LIBRARIES}
 )
 
 #############
