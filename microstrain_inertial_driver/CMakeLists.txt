@@ -5,6 +5,9 @@ project(microstrain_inertial_driver)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Export compile commands by default (helpful for clang-tidy and autocomplete for certain IDEs)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "" FORCE)
+
 # Force some options for this module and the MIP SDK
 set(BUILD_SHARED_LIBS_TEMP "${BUILD_SHARED_LIBS}")
 set(BUILD_EXAMPLES_TEMP "${BUILD_EXAMPLES}")
