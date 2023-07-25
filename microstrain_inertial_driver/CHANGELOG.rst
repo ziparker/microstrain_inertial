@@ -2,7 +2,7 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+3.1.0 (2023-07-25)
 ------------------
 * Adds several PRs from submodule (`#263 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/263>`_)
 * Updates submodule to fix TF warning (`#262 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/262>`_)

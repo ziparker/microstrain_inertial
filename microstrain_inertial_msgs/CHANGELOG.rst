@@ -2,7 +2,7 @@
 Changelog for package microstrain_inertial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+3.1.0 (2023-07-25)
 ------------------
 * ROS Turns on antenna calibration by default, and publishes the amount corrected by (`#237 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/237>`_)
   * Turns on antenna calibration by default, and publishes the amount corrected by
