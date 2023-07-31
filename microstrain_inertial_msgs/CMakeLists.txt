@@ -32,9 +32,16 @@ endif()
 set(SRV_DIR "${COMMON_DIR}/srv")
 file(GLOB SRV_FILES RELATIVE "${SRV_DIR}"
     "${SRV_DIR}/*.srv")
+set(MIP_SRV_DIR "${SRV_DIR}/mip")
+file(GLOB MIP_SRV_FILES RELATIVE "${MIP_SRV_DIR}"
+    "${MIP_SRV_DIR}/*.srv")
 add_service_files(
   DIRECTORY ${SRV_DIR}
   FILES ${SRV_FILES}
+)
+add_service_files(
+  DIRECTORY ${MIP_SRV_DIR}
+  FILES ${MIP_SRV_FILES}
 )
 
 # Generate Message Files
