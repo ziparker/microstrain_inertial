@@ -34,6 +34,9 @@ set(SRV_DIR "${COMMON_DIR}/srv")
 file(GLOB SRV_FILES RELATIVE "${SRV_DIR}"
     "${SRV_DIR}/*.srv")
 list(TRANSFORM SRV_FILES PREPEND ${COMMON_DIR}:srv/)
+file(GLOB MIP_SRV_FILES RELATIVE "${SRV_DIR}"
+    "${SRV_DIR}/mip/*.srv")
+list(TRANSFORM MIP_SRV_FILES PREPEND ${COMMON_DIR}:srv/)
 
 # Generate Message Files
 set(MSG_DIR "${COMMON_DIR}/msg")
@@ -56,6 +59,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   ${MIP_STRUCT_MSG_FILES}
   ${MIP_BITFIELD_MSG_FILES}
   ${SRV_FILES}
+  ${MIP_SRV_FILES}
   DEPENDENCIES std_msgs geometry_msgs
 )
 
