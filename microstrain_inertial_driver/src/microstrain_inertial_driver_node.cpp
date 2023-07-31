@@ -22,8 +22,8 @@ int main(int argc, char **argv)
   exe.add_node(node->get_node_base_interface());
 
   exe.spin();
-  
+
   rclcpp::shutdown();
 
- return 0;
+  return 0;
 }
