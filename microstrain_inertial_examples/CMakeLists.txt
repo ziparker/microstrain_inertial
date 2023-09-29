@@ -42,7 +42,8 @@ install(TARGETS ${LISTENER_CPP}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-# Install the launch files
+# Install the launch and config files
 install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
+install(DIRECTORY config/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config)
 
 roslint_cpp(${LISTENER_CPP_SRC_FILES})
