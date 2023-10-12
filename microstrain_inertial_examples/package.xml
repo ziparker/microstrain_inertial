@@ -23,6 +23,9 @@
   <exec_depend>microstrain_inertial_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>ublox</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>rviz2</exec_depend>
   
 
   <!-- The export tag contains other, unspecified, tags -->

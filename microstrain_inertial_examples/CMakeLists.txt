@@ -44,7 +44,7 @@ install(PROGRAMS
 )
 
 # Install the launch files
-install(DIRECTORY launch
+install(DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}
 )
 

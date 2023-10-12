@@ -1,0 +1,45 @@
+microstrain_inertial_driver:
+  ros__parameters:
+    # Allow the user to specify a port through our launch file
+    port: '/dev/ttyACM1'
+    baudrate: 115200
+
+    # Operate in the ENU frame
+    use_enu_frame: True
+
+    # Set the frame ID to something a little more descriptive
+    frame_id: 'cv7_ins_link'
+
+    # Set the transform mode to relative so we can easily display the output on RViz
+    tf_mode: 2
+
+    # Configure relative position to be configured based on the first valid fix we receive
+    filter_relative_position_config : True
+    filter_relative_position_source : 2
+
+    # Set the heading alignment selector to magnetometer since we will not be providing heading in this example.
+    # Note that if you have any form of external heading, it is probably better to set this to 8 in order to use that
+    filter_auto_heading_alignment_selector : 4
+
+    # During operation, we will assume that we are in a wheeled vehicle or heading
+    # If using a drone, disable this option, and enable "filter_enable_magnetometer_aiding"
+    filter_enable_wheeled_vehicle_constraint : True
+
+    # Setup some aiding options
+    filter_enable_gnss_pos_vel_aiding : True
+    filter_enable_gnss_heading_aiding : False
+
+    # Disable the PPS source
+    filter_pps_source: 0
+
+    # Disable the filter declination source
+    filter_declination_source: 1
+
+    # Subscribe to the aiding messages
+    subscribe_ext_fix: True
+    subscribe_ext_vel_enu: True
+
+    # Record a binary file
+    # TODO: Remove this before release
+    raw_file_enable: true
+    raw_file_directory: '/home/microstrain/catkin_ws/src/collected_data'
