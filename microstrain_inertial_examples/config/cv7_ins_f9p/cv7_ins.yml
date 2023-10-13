@@ -38,8 +38,3 @@ microstrain_inertial_driver:
     # Subscribe to the aiding messages
     subscribe_ext_fix: True
     subscribe_ext_vel_enu: True
-
-    # Record a binary file
-    # TODO: Remove this before release
-    raw_file_enable: true
-    raw_file_directory: '/home/microstrain/catkin_ws/src/collected_data'
