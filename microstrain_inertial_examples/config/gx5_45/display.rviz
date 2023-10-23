@@ -6,9 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1/Frames1
-        - /Odometry1
-        - /Odometry2
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 555
   - Class: rviz_common/Selection
@@ -54,14 +52,14 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: false
+        All Enabled: true
         base_link:
-          Value: true
-        cv7_ins_link:
           Value: true
         earth:
           Value: true
-        f9p_link:
+        gnss_1_antenna_link:
+          Value: true
+        gx5_45_link:
           Value: true
         map:
           Value: true
@@ -74,10 +72,9 @@ Visualization Manager:
         earth:
           map:
             base_link:
-              cv7_ins_link:
-                {}
-              f9p_link:
-                {}
+              gx5_45_link:
+                gnss_1_antenna_link:
+                  {}
       Update Interval: 0
       Value: true
     - Angle Tolerance: 0.10000000149011612
@@ -98,7 +95,7 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 5
+      Keep: 100
       Name: Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -165,7 +162,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 7.6674275398254395
+      Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -180,10 +177,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8247969150543213
+      Pitch: 0.3953988254070282
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 3.0453999042510986
+      Yaw: 2.880397081375122
     Saved: ~
 Window Geometry:
   Displays:
@@ -201,5 +198,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 72
-  Y: 60
+  X: 60
+  Y: 363

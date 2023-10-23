@@ -1,7 +1,7 @@
 microstrain_inertial_driver:
   ros__parameters:
     # You should change this section of config to match your setup
-    port : '/dev/ttyACM1'
+    port : '/dev/ttyACM0'
     baudrate : 115200
 
     # This will cause the node to convert any NED measurements to ENU
@@ -9,7 +9,7 @@ microstrain_inertial_driver:
     use_enu_frame : True
 
     # Configure some frame IDs
-    frame_id        : 'cv7_ins_link'  # Frame ID of all of the filter messages. Represents the location of the CV7-INS in the tf tree
+    frame_id        : 'gq7_link'  # Frame ID of all of the filter messages. Represents the location of the CV7-INS in the tf tree
     map_frame_id    : "map"           # Frame ID of the local tangent plane.
     earth_frame_id  : "earth"         # Frame ID of the global frame
     target_frame_id : "base_link"     # Frame ID that we will publish a transform to.
@@ -30,25 +30,7 @@ microstrain_inertial_driver:
     filter_relative_position_source : 2
 
     # This will set the initial heading alignment to use the magnetometer
-    # Note that if you have any form of external heading, it is probably better to set this to 8 in order to use that
-    filter_auto_heading_alignment_selector : 4
+    filter_auto_heading_alignment_selector : 4  # TODO: Set this to dual antenna
 
-    # During operation, we will assume that we are in a wheeled vehicle for more accurate heading
-    # If using a drone, disable this option, and enable "filter_enable_magnetometer_aiding"
-    filter_enable_wheeled_vehicle_constraint : True
 
-    # Setup some aiding options.
-    filter_enable_gnss_pos_vel_aiding : True
-    filter_enable_gnss_heading_aiding : False
-
-    # This example shows a very basic setup with no PPS sync, so this will disable PPS on the device.
-    # Note that if you have any way to provide PPS, you should setup PPS
-    filter_pps_source : 0
-
-    # Disable the filter declination source. This is required to get the node to start, and isn't doing anything special
-    filter_declination_source : 1
-
-    # Subscribe to the aiding messages.
-    # For this example we are just subscribing to external 
-    subscribe_ext_fix     : True
-    subscribe_ext_vel_enu : True
+    filter_llh_position_data_rate          : 10  # Rate of ekf/llh_position topic

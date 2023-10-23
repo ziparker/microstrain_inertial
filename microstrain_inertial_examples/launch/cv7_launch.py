@@ -9,9 +9,8 @@ from launch_ros.actions import Node, SetRemap
 
 # Path to the launch files and directories that we will use
 _MICROSTRAIN_LAUNCH_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_driver'), 'launch', 'microstrain_launch.py')
-_CV7_INS_PARAMS_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'cv7_ins_f9p', 'cv7_ins.yml')
-_F9P_PARAMS_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'cv7_ins_f9p', 'f9p.yml')
-_RVIZ_DISPLAY_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'cv7_ins_f9p', 'display.rviz')
+_CV7_PARAMS_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'cv7', 'cv7.yml')
+_RVIZ_DISPLAY_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'cv7', 'display.rviz')
 
 def generate_launch_description():
   return LaunchDescription([
@@ -21,27 +20,13 @@ def generate_launch_description():
       launch_arguments={
         'configure': 'true',
         'activate': 'true',
-        'params_file': _CV7_INS_PARAMS_FILE,
+        'params_file': _CV7_PARAMS_FILE,
         'namespace': '/',
       }.items()
     ),
 
-    # Remap the ublox topics to the ones needed by the microstrain driver
-    SetRemap('/fix', '/ext/llh_position'),
-    SetRemap('/fix_velocity', '/ext/velocity_enu'),
-
-    # Ublox node
-    Node(
-      package='ublox_gps',
-      executable='ublox_gps_node',
-      output='screen',
-      parameters=[
-        _F9P_PARAMS_FILE
-      ]
-    ),
-
-    # Publish a static transform for where the F9P is mounted on base_link.
-    # Unless the F9P is mounted exactly at base_link, you should change this to be accurate to your setup
+    # In this example we have no way to publish an actual map transform, so just publish a static one so we can display data on rviz
+    # If integrating into an existing system, this should be replaced with a navigation solution
     Node(
       package='tf2_ros',
       executable='static_transform_publisher',
@@ -49,17 +34,17 @@ def generate_launch_description():
       arguments=[
           "--x", "0",
           "--y", "0",
-          "--z", "0",
+          "--z", "100",
           "--roll", "0",
           "--pitch", "0",
           "--yaw", "0",
-          "--frame-id", "base_link",
-          "--child-frame-id", "f9p_link"
+          "--frame-id", "map",
+          "--child-frame-id", "base_link"
         ]
     ),
 
-    # Publish a static transform for where the CV7-INS is mounted on base_link.
-    # Unless the CV7-INS is mounted exactly at base_link, you should change this to be accurate to your setup
+    # Publish a static transform for where the CV7 is mounted on base_link.
+    # Unless the CV7 is mounted exactly at base_link, you should change this to be accurate to your setup
     Node(
       package='tf2_ros',
       executable='static_transform_publisher',
@@ -72,7 +57,7 @@ def generate_launch_description():
           "--pitch", "0",
           "--yaw", "0",
           "--frame-id", "base_link",
-          "--child-frame-id", "cv7_ind_link"
+          "--child-frame-id", "cv7_link"
         ]
     ),
 
