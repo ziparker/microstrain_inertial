@@ -11,7 +11,7 @@ from launch_ros.actions import Node, SetRemap
 # Path to the launch files and directories that we will use
 _MICROSTRAIN_LAUNCH_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_driver'), 'launch', 'microstrain_launch.py')
 _GQ7_PARAMS_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'gq7', 'gq7.yml')
-_RVIZ_DISPLAY_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'cv7', 'display.rviz')
+_RVIZ_DISPLAY_FILE = os.path.join(ament_index_python.packages.get_package_share_directory('microstrain_inertial_examples'), 'config', 'gq7', 'display.rviz')
 
 def generate_launch_description():
   return LaunchDescription([
@@ -33,9 +33,9 @@ def generate_launch_description():
       executable='static_transform_publisher',
       output='screen',
       arguments=[
-          "--x", "1",
-          "--y", "1",
-          "--z", "1",
+          "--x", "-0.355",
+          "--y", "-0.1735",
+          "--z", "0.889",
           "--roll", "0",
           "--pitch", "0",
           "--yaw", "0",
