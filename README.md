@@ -13,6 +13,7 @@ Implemented using the MicroStrain Inertial Protocol SDK ([`mip_sdk`](https://git
     * [Buildfarm](#buildfarm)
     * [Docker](#docker)
     * [Source](#source)
+    * [Udev Rules](#udev-rules)
 * [Building From Source](#building-from-source)
 * [Run Instructions](#run-instructions)
     * [Single Device](#launch-the-node-and-publish-data)
@@ -101,6 +102,19 @@ time you pull changes you should pull with the `--recurse-submodules` flag, or a
     source ~/your_workspace/install/setup.bash
     ```
    The source command will need to be run in each terminal prior to launching a ROS node.
+
+## Udev Rules
+
+This driver comes with [udev rules](https://wiki.debian.org/udev) that will create a symlink for all microstrain devices.
+To install the rules. Download the [udev](./microstrain_inertial_driver/debian/udev) file from this repo and copy it to
+`/etc/udev/rules.d/100-microstrain.rules`
+
+Once the udev rules are installed, the devices will appear as follows in the file system, where {serial} is the serial number of the device:
+
+* `/dev/microstrain_main` - Most recent non-GQ7 device, or the main port of a GQ7 connected. **NOTE**: Do not use this rule with multiple devices as it gets overridden with multiple devices.
+* `/dev/microstrain_aux` - Most recent GQ7 aux port connected. **NOTE**: Do not use this rule with multiple devices as it gets overridden with multiple devices.
+* `/dev/microstrain_main_{serial}` - All non-GQ7 devices, and the main port of GQ7 devices
+* `/dev/microstrain_aux_{serial}` - The aux port of GQ7 devices
 
 ## Run Instructions
 
