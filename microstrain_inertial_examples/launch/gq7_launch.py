@@ -45,12 +45,12 @@ def generate_launch_description():
     ),
 
     # Run rviz to view the state of the application
-    #Node(
-    #  package='rviz2',
-    #  executable='rviz2',
-    #  output='screen',
-    #  arguments=[
-    #    '-d', _RVIZ_DISPLAY_FILE
-    #  ]
-    #),
+    Node(
+      package='rviz2',
+      executable='rviz2',
+      output='screen',
+      arguments=[
+        '-d', _RVIZ_DISPLAY_FILE
+      ]
+    ),
   ])

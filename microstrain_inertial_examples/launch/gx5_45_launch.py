@@ -26,18 +26,18 @@ def generate_launch_description():
     ),
 
     # Publish a static transform for where the GX5-45 is mounted on base_link.
-    # Unless the GX5-45 is mounted exactly one meter above base_link, you should change this to be accurate to your setup
+    # Unless the GX5-45 is mounted directly at base_link, you should change this to be accurate to your setup.
     Node(
       package='tf2_ros',
       executable='static_transform_publisher',
       output='screen',
       arguments=[
-          "--x", "0.25",
-          "--y", "0.50",
-          "--z", "0.75",
-          "--roll", "0",
-          "--pitch", "0",
-          "--yaw", "0",
+          "--x", "0.0",
+          "--y", "0.0",
+          "--z", "0.0",
+          "--roll", "0.0",
+          "--pitch", "0.0",
+          "--yaw", "0.0",
           "--frame-id", "base_link",
           "--child-frame-id", "gx5_45_link"
         ]
@@ -47,7 +47,7 @@ def generate_launch_description():
     Node(
       package='rviz2',
       executable='rviz2',
-      output='screen',
+      output='log',
       arguments=[
         '-d', _RVIZ_DISPLAY_FILE
       ]

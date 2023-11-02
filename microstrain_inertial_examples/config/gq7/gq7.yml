@@ -40,8 +40,8 @@ microstrain_inertial_driver:
 
     # Set the antenna offsets.
     # Note: These should be changed for you setup, otherwise dual antenna heading will not initialize.
-    gnss1_antenna_offset : [0.163, -0.01, -0.999]
-    gnss2_antenna_offset : [0.31, 0.58, -1.03]
+    gnss1_antenna_offset : [0.0, -0.7, -1.0]
+    gnss2_antenna_offset : [0.0, 0.7, -1.0]
 
     # This will set the heading alignment to be dual antenna
     filter_auto_heading_alignment_selector : 1
@@ -74,11 +74,11 @@ microstrain_inertial_driver:
 
     # Enable the hardware odometer
     enable_hardware_odometer : True
-    odometer_scaling         : 232.3
+    odometer_scaling         : 1.0
     odometer_uncertainty     : 0.15
 
     # Allow the filter to use the hardware odometer in it's estimates
-    filter_enable_odometer_aiding : False
+    filter_enable_odometer_aiding : True
 
     # For this example, we will assume that we are in a wheeled vehicle such as a car.
     # Setting this option will give us better heading performance especially in GNSS outages
@@ -86,7 +86,8 @@ microstrain_inertial_driver:
     filter_enable_wheeled_vehicle_constraint : True
 
     # Set the location of the odometer
-    filter_speed_lever_arm   : [0.355, 0.914, 0.48]
+    # Note: These should be changed for you setup
+    filter_speed_lever_arm : [0.0, 0.0, 0.0]
 
     # This GPIO config is specific to this setup, and requires that you use GPIO pins 1 and 2 for encoder A and B respectively.
     # You should update for your setup appropriately

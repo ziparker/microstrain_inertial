@@ -13,10 +13,11 @@ microstrain_inertial_driver:
     use_enu_frame : True
 
     # Configure some frame IDs
-    frame_id        : 'gx5_45_link'  # Frame ID of all of the filter messages. Represents the location of the CV7-INS in the tf tree
-    map_frame_id    : "map"           # Frame ID of the local tangent plane.
-    earth_frame_id  : "earth"         # Frame ID of the global frame
-    target_frame_id : "base_link"     # Frame ID that we will publish a transform to.
+    frame_id        : 'gx5_45_link'                 # Frame ID of all of the filter messages. Represents the location of the CV7-INS in the tf tree
+    map_frame_id    : "map"                         # Frame ID of the local tangent plane.
+    earth_frame_id  : "earth"                       # Frame ID of the global frame
+    gnss1_frame_id  : "gx5_45_gnss_1_antenna_link"  # Frame ID for GNSS antenna 1
+    target_frame_id : "base_link"                   # Frame ID that we will publish a transform to.
 
     # Disable the transform from the mount to frame id transform as it will be handled in the launch file
     publish_mount_to_frame_id_transform : False
@@ -35,3 +36,15 @@ microstrain_inertial_driver:
 
     # This device only supports sending IMU data at 500 hertz
     imu_data_rate : 500
+
+    # The default is to publish LLH position and velocity, but rviz has a hard time displaying that.
+    # Instead we will publish the position in the ECEF frame
+    gnss1_llh_position_data_rate   : 0
+    gnss1_velocity_data_rate       : 0
+    gnss1_odometry_earth_data_rate : 2
+    
+    # We will only publish the odometry messages from the filter in this example.
+    # Also publish the human readable message which can be echoed from the command line
+    filter_human_readable_status_data_rate : 1
+    filter_odometry_earth_data_rate        : 10
+    filter_odometry_map_data_rate          : 10
