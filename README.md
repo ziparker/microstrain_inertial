@@ -114,7 +114,7 @@ The node has some optional launch parameters that can be specified from the comm
 - `namespace` : namespace that the driver will run in. All services and publishers will be prepended with this, default: `/`
 - `node_name` : name of the driver, default: `microstrain_inertial_driver`
 - `debug`     : output debug logs, default: `false`
-- `params_file` : path to a parameter file to override the default parameters stored in [`params.yml`](./microstrain_inertial_driver/microstrain_inertial_driver_common/config/params.yml), default: empty
+- `params_file` : path to a parameter file to override the default parameters stored in [`params.yml`](./microstrain_inertial_driver_common/blob/main/config/params.yml), default: empty
     
 #### Publish data from two devices simultaneously  
 
