@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.2.0 (2023-12-21)
+------------------
 * Updates submodule with GNSS signal configuration options (`#288 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/288>`_)
 * Contributors: Rob
 
