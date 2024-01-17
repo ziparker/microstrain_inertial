@@ -33,9 +33,9 @@ def generate_launch_description():
       executable='static_transform_publisher',
       output='screen',
       arguments=[
-          "--x", "-0.355",
-          "--y", "-0.1735",
-          "--z", "0.889",
+          "--x", "0",
+          "--y", "0",
+          "--z", "0",
           "--roll", "0",
           "--pitch", "0",
           "--yaw", "0",
