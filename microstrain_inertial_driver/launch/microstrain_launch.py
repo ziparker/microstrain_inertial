@@ -9,7 +9,7 @@ from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable, EmitEv
 from launch.conditions import LaunchConfigurationEquals
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.events import matches_action
-from launch.event_handlers import OnProcessStart, OnExecutionComplete
+from launch.event_handlers import OnProcessStart, OnProcessExit, OnExecutionComplete
 from launch_ros.actions import LifecycleNode
 from launch_ros.events.lifecycle import ChangeState
 
@@ -92,7 +92,7 @@ def generate_launch_description():
   )
   activate_event_handler = RegisterEventHandler(
     OnExecutionComplete(
-      target_action=config_event_handler,
+      target_action=config_event,
       on_completion=[
         activate_event
       ]
