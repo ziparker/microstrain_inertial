@@ -42,7 +42,7 @@ gnss1_antenna_offset : [0.0, -0.7, -1.0]
 gnss2_antenna_offset : [0.0, 0.7, -1.0]
 
 # This will set the heading alignment to be dual antenna
-filter_auto_heading_alignment_selector : 4
+filter_auto_heading_alignment_selector : 1
 
 # This will contain the raw IMU data, NOT the filtered IMU data
 imu_data_rate : 100

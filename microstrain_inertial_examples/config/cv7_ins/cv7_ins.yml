@@ -47,6 +47,6 @@ filter_pps_source : 0
 filter_declination_source : 1
 
 # Subscribe to the aiding messages.
-# For this example we are just subscribing to external 
+# For this example we are just subscribing to external GNSS position and velocity
 subscribe_ext_fix     : True
 subscribe_ext_vel_enu : True

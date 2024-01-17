@@ -19,7 +19,7 @@
       0 0 100 0 0 0 map base_link 1000
     " />
 
-  <!-- Publish a static transform for where the CV7 is mounted on base_link. -->
+  <!-- Publish a static transform for where the GX5-15 is mounted on base_link. -->
   <!-- Unless the GX5-15 is mounted exactly at base_link, you should change this to be accurate to your setup -->
   <node 
     pkg="tf"
