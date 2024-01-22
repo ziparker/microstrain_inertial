@@ -10,13 +10,17 @@
             "GROUP_ID": "1000"
         }
     },
-    "extensions": [
-		"ms-iot.vscode-ros",
-		"ms-vscode.cpptools",
-		"ms-python.python",
-		"ms-vscode.cmake-tools",
-		"ms-vscode.cpptools-extension-pack"
-	],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-iot.vscode-ros",
+                "ms-vscode.cpptools",
+                "ms-python.python",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.cpptools-extension-pack"
+            ],
+        }
+    },
     "containerUser": "root",
     "remoteUser": "microstrain",
     "runArgs": [
@@ -27,7 +31,6 @@
     "remoteEnv": {
         "DISPLAY": "${localEnv:DISPLAY}"
     },
-    "settings": {},
     "postCreateCommand": "sudo apt-get update && rosdep install --from-paths ~/catkin_ws/src --ignore-src -r -y",
     "mounts": [
         "source=/dev,target=/dev,type=bind,consistency=cached",
