@@ -2,6 +2,11 @@
 Changelog for package microstrain_inertial_rqt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ROS Standardize and update to work better with ROS standard tools (`#294 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/294>`_)
+* Contributors: Rob
+
 3.2.1 (2024-01-26)
 ------------------
 
