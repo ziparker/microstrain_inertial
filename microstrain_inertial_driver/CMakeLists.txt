@@ -5,6 +5,9 @@ project(microstrain_inertial_driver)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Export compile commands by default (helpful for clang-tidy and autocomplete for certain IDEs)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "" FORCE)
+
 # Force some options for this module and the MIP SDK
 set(BUILD_SHARED_LIBS_TEMP "${BUILD_SHARED_LIBS}")
 set(BUILD_EXAMPLES_TEMP "${BUILD_EXAMPLES}")
@@ -67,6 +70,9 @@ else()
   endif()
 endif()
 
+# Set some general CMake flags
+set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-unused-variable -Wno-format -fno-builtin-memcpy")
+
 # Include the MIP SDK source
 add_subdirectory("${MIP_SDK_DIR}" EXCLUDE_FROM_ALL)
 include_directories("${MIP_SDK_SRC_DIR}")
@@ -80,7 +86,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   nav_msgs
   nmea_msgs
-  mavros_msgs
+  rtcm_msgs
   roscpp
   sensor_msgs
   std_msgs
@@ -88,9 +94,16 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   tf2_geometry_msgs
-  diagnostic_updater
   microstrain_inertial_msgs
 )
+
+# Find some less ROS-y packages
+list(APPEND CMAKE_MODULE_PATH "/usr/share/cmake/geographiclib/")
+find_package(Eigen3 REQUIRED)
+find_package(GeographicLib REQUIRED)
+
+# We want to use the static library for libgeographic, but it doesn't seem to find it for us, so substitute it here
+string(REGEX REPLACE "[.]so[^\\/\\s]*$" ".a" GeographicLib_LIBRARIES ${GeographicLib_LIBRARIES})
 
 ###################################
 ## catkin specific configuration ##
@@ -116,7 +129,7 @@ catkin_package(
     sensor_msgs
     nav_msgs
     nmea_msgs
-    mavros_msgs
+    rtcm_msgs
     message_runtime
     microstrain_inertial_msgs
 )
@@ -125,11 +138,13 @@ catkin_package(
 ###########
 
 # Add the catkin includes
-include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
-
-# Set some general CMake flags
-add_definitions(-std=c++11)
-set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
+include_directories(
+  include
+  ${COMMON_DIR}/include
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
+  ${GeographicLib_INCLUDE_DIRS}
+)
 
 set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/subscribers.cpp
@@ -137,6 +152,7 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/node_common.cpp
   ${COMMON_SRC_DIR}/services.cpp
   ${COMMON_SRC_DIR}/config.cpp
+  ${COMMON_SRC_DIR}/utils/clock_bias_monitor.cpp
 
   ${COMMON_SRC_DIR}/utils/mappings/mip_mapping.cpp
   ${COMMON_SRC_DIR}/utils/mappings/mip_publisher_mapping.cpp
@@ -155,6 +171,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/services.h
   ${COMMON_INC_DIR}/config.h
   ${COMMON_INC_DIR}/utils/ros_compat.h
+  ${COMMON_INC_DIR}/utils/clock_bias_monitor.h
 
   ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
   ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
@@ -173,20 +190,12 @@ add_dependencies(${PROJECT_NAME}
   ${catkin_EXPORTED_TARGETS}
 )
 
-add_library(microstrain_diagnostic_updater src/microstrain_diagnostic_updater.cpp)
-add_dependencies(microstrain_diagnostic_updater
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-)
-
 # Executables
 set(NODE_SRC_FILES
   src/microstrain_inertial_driver_node.cpp
-  src/microstrain_diagnostic_updater.cpp
 )
 set(NODE_INC_FILES
   include/${PROJECT_NAME}/microstrain_inertial_driver.h
-  include/${PROJECT_NAME}/microstrain_diagnostic_updater.h
 )
 add_executable(${PROJECT_NAME}_node ${NODE_SRC_FILES} ${NODE_INC_FILES})
 
@@ -215,6 +224,7 @@ target_link_libraries(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  ${GeographicLib_LIBRARIES}
 )
 
 #############
@@ -228,7 +238,7 @@ install(TARGETS ${PROJECT_NAME}_node
   PUBLIC_HEADER DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(DIRECTORY launch config
+install(DIRECTORY launch config urdf meshes
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
