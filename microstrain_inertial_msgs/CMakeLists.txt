@@ -2,11 +2,28 @@ cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_STANDARD 14)
 project(microstrain_inertial_msgs)
 
+# Some ROS version specific defines
+if(DEFINED ENV{ROS_DISTRO})
+  if ("$ENV{ROS_DISTRO}" STREQUAL "rolling")
+    set(EXTRA_DEPS service_msgs)
+  elseif ("$ENV{ROS_DISTRO}" STREQUAL "iron")
+    set(EXTRA_DEPS service_msgs)
+  elseif ("$ENV{ROS_DISTRO}" STREQUAL "humble")
+  elseif ("$ENV{ROS_DISTRO}" STREQUAL "galactic")
+  elseif ("$ENV{ROS_DISTRO}" STREQUAL "foxy")
+  else()
+    set(EXTRA_DEPS service_msgs)
+  endif()
+endif()
+
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_runtime REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+foreach (EXTRA_DEP IN LISTS EXTRA_DEPS)
+  find_package(${EXTRA_DEP} REQUIRED)
+endforeach()
 
 # Locate the common code and messages
 set(COMMON_NAME "microstrain_inertial_msgs_common")
@@ -31,17 +48,37 @@ endif()
 
 # Generate Service Files
 set(SRV_DIR "${COMMON_DIR}/srv")
-FILE(GLOB SRV_FILES RELATIVE "${SRV_DIR}"
+file(GLOB SRV_FILES RELATIVE "${SRV_DIR}"
     "${SRV_DIR}/*.srv")
 list(TRANSFORM SRV_FILES PREPEND ${COMMON_DIR}:srv/)
+file(GLOB MIP_SRV_FILES RELATIVE "${SRV_DIR}"
+    "${SRV_DIR}/mip/*.srv")
+list(TRANSFORM MIP_SRV_FILES PREPEND ${COMMON_DIR}:srv/)
 
 # Generate Message Files
 set(MSG_DIR "${COMMON_DIR}/msg")
-FILE(GLOB MSG_FILES RELATIVE "${MSG_DIR}"
+file(GLOB MSG_FILES RELATIVE "${MSG_DIR}"
     "${MSG_DIR}/*.msg")
 list(TRANSFORM MSG_FILES PREPEND ${COMMON_DIR}:msg/)
+file(GLOB MIP_MSG_FILES RELATIVE "${MSG_DIR}"
+    "${MSG_DIR}/mip/*.msg")
+list(TRANSFORM MIP_MSG_FILES PREPEND ${COMMON_DIR}:msg/)
+file(GLOB MIP_STRUCT_MSG_FILES RELATIVE "${MSG_DIR}"
+    "${MSG_DIR}/mip/struct/*.msg")
+list(TRANSFORM MIP_STRUCT_MSG_FILES PREPEND ${COMMON_DIR}:msg/)
+file(GLOB MIP_BITFIELD_MSG_FILES RELATIVE "${MSG_DIR}"
+    "${MSG_DIR}/mip/bitfield/*.msg")
+list(TRANSFORM MIP_BITFIELD_MSG_FILES PREPEND ${COMMON_DIR}:msg/)
 
-rosidl_generate_interfaces(${PROJECT_NAME} ${MSG_FILES} ${SRV_FILES} DEPENDENCIES std_msgs geometry_msgs)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${MSG_FILES}
+  ${MIP_MSG_FILES}
+  ${MIP_STRUCT_MSG_FILES}
+  ${MIP_BITFIELD_MSG_FILES}
+  ${SRV_FILES}
+  ${MIP_SRV_FILES}
+  DEPENDENCIES std_msgs geometry_msgs ${EXTRA_DEPS}
+)
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()

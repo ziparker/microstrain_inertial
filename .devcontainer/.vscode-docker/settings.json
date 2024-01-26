@@ -1,13 +1,13 @@
 {
     "python.autoComplete.extraPaths": [
-        "/home/catkin_ws/install/microstrain_inertial_msgs/lib/python3.8/site-packages/",
-        "/home/catkin_ws/install/microstrain_inertial_quickview/lib/python3.8/site-packages/",
-        "/opt/ros/${env:ROS_DISTRO}/lib/python3.8/site-packages"
+        "/home/microstrain/catkin_ws/install/microstrain_inertial_msgs/local/lib/python3.10/dist-packages",
+        "/home/microstrain/catkin_ws/install/microstrain_inertial_quickview/local/lib/python3.10/dist-packages",
+        "/opt/ros/${env:ROS_DISTRO}/lib/python3.10/site-packages",
     ],
     "python.analysis.extraPaths": [
-        "/home/catkin_ws/install/microstrain_inertial_msgs/lib/python3.8/site-packages/",
-        "/home/catkin_ws/install/microstrain_inertial_quickview/lib/python3.8/site-packages/",
-        "/opt/ros/${env:ROS_DISTRO}/lib/python3.8/site-packages"
+        "/home/microstrain/catkin_ws/install/microstrain_inertial_msgs/local/lib/python3.10/dist-packages",
+        "/home/microstrain/catkin_ws/install/microstrain_inertial_quickview/local/lib/python3.10/dist-packages",
+        "/opt/ros/${env:ROS_DISTRO}/lib/python3.10/site-packages",
     ],
     "editor.tabSize": 2
 }

@@ -1,19 +1,9 @@
 {
     "configurations": [
         {
-            "name": "Linux",
-            "includePath": [
-                "/usr/local/include/**",
-                "${workspaceFolder}/**",
-                "/opt/ros/**"
-            ],
-            "defines": [
-                "MICROSTRAIN_ROS_VERSION=2"
-            ],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++14",
-            "intelliSenseMode": "linux-gcc-x64"
+            "name": "CMake",
+            "compileCommands": "${config:cmake.buildDirectory}/microstrain_inertial_driver/compile_commands.json",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

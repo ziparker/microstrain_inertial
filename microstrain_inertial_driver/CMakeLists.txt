@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# Export compile commands by default (helpful for clang-tidy and autocomplete for certain IDEs)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "" FORCE)
+
 # Force some options for this module and the MIP SDK
 set(BUILD_SHARED_LIBS_TEMP "${BUILD_SHARED_LIBS}")
 set(BUILD_EXAMPLES_TEMP "${BUILD_EXAMPLES}")
@@ -68,14 +71,14 @@ else()
   endif()
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-unused-variable -fno-builtin-memcpy")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-builtin-memcpy")
+endif()
+
 # Include the MIP SDK source
 add_subdirectory("${MIP_SDK_DIR}" EXCLUDE_FROM_ALL)
 include_directories("${MIP_SDK_SRC_DIR}")
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -fno-builtin-memcpy")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-builtin-memcpy")
-endif()
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -87,7 +90,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(nmea_msgs REQUIRED)
-find_package(mavros_msgs REQUIRED)
+find_package(rtcm_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -121,7 +124,7 @@ ament_export_dependencies(
     sensor_msgs
     nav_msgs
     nmea_msgs
-    mavros_msgs
+    rtcm_msgs
     message_runtime
 		microstrain_inertial_msgs
 )
@@ -130,8 +133,22 @@ ament_export_dependencies(
 ## Build ##
 ###########
 
+# Find some less ROS-y packages
+list(APPEND CMAKE_MODULE_PATH "/usr/share/cmake/geographiclib/")
+find_package(Eigen3 REQUIRED)
+find_package(GeographicLib REQUIRED)
+
+# We want to use the static library for libgeographic, but it doesn't seem to find it for us, so substitute it here
+string(REGEX REPLACE "[.]so[^\\/\\s]*$" ".a" GeographicLib_LIBRARIES ${GeographicLib_LIBRARIES})
+
 # Add the catkin includes
-include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
+include_directories(
+  include
+  ${COMMON_DIR}/include
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
+  ${GeographicLib_INCLUDE_DIRS}
+)
 
 # Only lint the ROS2 code as the ROS1 code is linted through ROS1 and having two competing standards would make things messy quick
 set(NODE_SRC_FILES
@@ -146,6 +163,8 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/node_common.cpp
   ${COMMON_SRC_DIR}/services.cpp
   ${COMMON_SRC_DIR}/config.cpp
+
+  ${COMMON_SRC_DIR}/utils/clock_bias_monitor.cpp
 
   ${COMMON_SRC_DIR}/utils/mappings/mip_mapping.cpp
   ${COMMON_SRC_DIR}/utils/mappings/mip_publisher_mapping.cpp
@@ -164,6 +183,7 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/services.h
   ${COMMON_INC_DIR}/config.h
   ${COMMON_INC_DIR}/utils/ros_compat.h
+  ${COMMON_INC_DIR}/utils/clock_bias_monitor.h
 
   ${COMMON_INC_DIR}/utils/mappings/mip_mapping.h
   ${COMMON_INC_DIR}/utils/mappings/mip_publisher_mapping.h
@@ -186,7 +206,7 @@ ament_target_dependencies(${PROJECT_NAME}
   geometry_msgs
   nav_msgs
   nmea_msgs
-  mavros_msgs
+  rtcm_msgs
   tf2
   tf2_ros
   tf2_geometry_msgs
@@ -232,6 +252,7 @@ target_link_libraries(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  ${GeographicLib_LIBRARIES}
 )
 
 #############

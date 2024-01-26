@@ -1,6 +1,6 @@
 ## Description
 
-Interface (driver) software, including ROS node, for the [MicroStrain](https://microstrain.com) line of inertial sensors from [Parker](http://parker.com), developed in Williston, VT.
+Interface (driver) software, including ROS node, for inertial sensors from [MicroStrain by HBK](https://microstrain.com), developed in Williston, VT.
 
 Implemented using the MicroStrain Inertial Protocol SDK ([`mip_sdk`](https://github.com/LORD-MicroStrain/mip_sdk))
 
@@ -11,8 +11,8 @@ Implemented using the MicroStrain Inertial Protocol SDK ([`mip_sdk`](https://git
 * [Packages](#packages)
 * [Install Instructions](#install-instructions)
     * [Buildfarm](#buildfarm)
-    * [Docker](#docker)
     * [Source](#source)
+    * [Udev Rules](#udev-rules)
 * [Building From Source](#building-from-source)
 * [Run Instructions](#run-instructions)
     * [Single Device](#launch-the-node-and-publish-data)
@@ -60,13 +60,6 @@ sudo apt-get update && sudo apt-get install ros-ROS_DISTRO-microstrain-inertial-
 For more information on the ROS distros and platforms we support, please see [index.ros.org](https://index.ros.org/r/microstrain_inertial/github-LORD-MicroStrain-microstrain_inertial/#humble)
 
 
-### Docker
-
-As of `v2.2.2` the `microstrain_inertial_driver` is distributed as a docker image. More information on how to use the image can be found on [DockerHub](https://hub.docker.com/r/microstrain/ros-microstrain_inertial_driver).
-
-If you are interested in working on the node in a docker container, see the [Docker Development](#docker-development) section.
-
-
 ### Source
 
 If you need to modify the source of this repository, or are running on a platform that we do not support, you can build from source by following the [Building From Source](#building-from-source) guide below.
@@ -101,6 +94,21 @@ time you pull changes you should pull with the `--recurse-submodules` flag, or a
     source ~/your_workspace/install/setup.bash
     ```
    The source command will need to be run in each terminal prior to launching a ROS node.
+
+## Udev Rules
+
+**NOTE**: If installing from the buildfarm, the udev rules will be installed automatically
+
+This driver comes with [udev rules](https://wiki.debian.org/udev) that will create a symlink for all microstrain devices.
+To install the rules. Download the [udev](./microstrain_inertial_driver/debian/udev) file from this repo and copy it to
+`/etc/udev/rules.d/100-microstrain.rules`
+
+Once the udev rules are installed, the devices will appear as follows in the file system, where {serial} is the serial number of the device:
+
+* `/dev/microstrain_main` - Most recent non-GQ7 device, or the main port of a GQ7 connected. **NOTE**: Do not use this rule with multiple devices as it gets overridden with multiple devices.
+* `/dev/microstrain_aux` - Most recent GQ7 aux port connected. **NOTE**: Do not use this rule with multiple devices as it gets overridden with multiple devices.
+* `/dev/microstrain_main_{serial}` - All non-GQ7 devices, and the main port of GQ7 devices
+* `/dev/microstrain_aux_{serial}` - The aux port of GQ7 devices
 
 ## Run Instructions
 
@@ -145,9 +153,9 @@ An example subscriber node can be found in the [MicroStrain Examples](./microstr
 
 #### Lifecycle Node
 
-This driver is implemented as a lifecycle node. Upon running, the node will be in the unconfigured state and no interaction has occurred with the device.
+This driver is implemented as a lifecycle node. It is possible to launch it in an unconfigured and unactivated state.
 
-You may automatically configure and activate the node on startup using the `configure` and `activate` [arguments](#launch-the-node-and-publish-data) to the launch file.
+You may change this with the `configure` and `activate` [arguments](#launch-the-node-and-publish-data) to the launch file.
 
 The node may be transitioned anytime after startup using the following commands (note that the `namespace` and `name` parameters will affect the node name in the following commands):
 
@@ -209,6 +217,7 @@ Both the `ros` and `ros2` branches share most of their code by using git submodu
 
 Previous versions of the driver were released as [tags](https://github.com/LORD-MicroStrain/microstrain_inertial/tags) on Github. They can also be found in specific branches:
 
+* [`ros2-3.x.x`](https://github.com/LORD-MicroStrain/microstrain_inertial/tree/ros2-3.x.x) contains the most recent code before the standardizing refactor
 * [`ros2-2.x.x`](https://github.com/LORD-MicroStrain/microstrain_inertial/tree/ros2-2.x.x) contains the most recent code before the MIP SDK refactor
 
 ## License

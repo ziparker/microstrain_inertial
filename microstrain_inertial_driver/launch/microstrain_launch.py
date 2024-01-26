@@ -5,10 +5,11 @@
 import os
 import yaml
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable, EmitEvent
+from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable, EmitEvent, RegisterEventHandler
 from launch.conditions import LaunchConfigurationEquals
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.events import matches_action
+from launch.event_handlers import OnProcessStart, OnProcessExit, OnExecutionComplete
 from launch_ros.actions import LifecycleNode
 from launch_ros.events.lifecycle import ChangeState
 
@@ -34,8 +35,8 @@ def generate_launch_description():
   launch_description = []
   launch_description.append(DeclareLaunchArgument('namespace',   default_value='/',                description='Namespace to use when launching the nodes in this launch file'))
   launch_description.append(DeclareLaunchArgument('node_name',   default_value=_PACKAGE_NAME,      description='Name to give the Microstrain Inertial Driver node'))
-  launch_description.append(DeclareLaunchArgument('configure',   default_value='false',            description='Whether or not to configure the node on startup'))
-  launch_description.append(DeclareLaunchArgument('activate',    default_value='false',            description='Whether or not to activate the node on startup'))
+  launch_description.append(DeclareLaunchArgument('configure',   default_value='true',             description='Whether or not to configure the node on startup'))
+  launch_description.append(DeclareLaunchArgument('activate',    default_value='true',             description='Whether or not to activate the node on startup'))
   launch_description.append(DeclareLaunchArgument('debug',       default_value='false',            description='Whether or not to log debug information.'))
   launch_description.append(DeclareLaunchArgument('params_file', default_value=_EMPTY_PARAMS_FILE, description='Path to file that will load additional parameters'))
 
@@ -80,9 +81,27 @@ def generate_launch_description():
     condition = LaunchConfigurationEquals('activate', 'true')
   )
 
+  # String the event emitions together so that one happens after the other
+  config_event_handler = RegisterEventHandler(
+    OnProcessStart(
+      target_action=microstrain_node,
+      on_start=[
+        config_event
+      ]
+    )
+  )
+  activate_event_handler = RegisterEventHandler(
+    OnExecutionComplete(
+      target_action=config_event,
+      on_completion=[
+        activate_event
+      ]
+    )
+  )
+
   launch_description.append(microstrain_node)
-  launch_description.append(config_event)
-  launch_description.append(activate_event)
+  launch_description.append(config_event_handler)
+  launch_description.append(activate_event_handler)
   return LaunchDescription(launch_description)
   
 
