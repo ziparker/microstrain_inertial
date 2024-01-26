@@ -2,6 +2,11 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.2.1 (2024-01-26)
+------------------
+* Fixes math to properly put the velocity into the sensor frame when using ENU (`#292 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/292>`_)
+* Contributors: Rob
+
 3.2.0 (2023-12-21)
 ------------------
 * Updates submodule with GNSS signal configuration options (`#288 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/288>`_)
