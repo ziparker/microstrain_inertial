@@ -70,6 +70,9 @@ else()
   endif()
 endif()
 
+# Set some general CMake flags
+set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-unused-variable -Wno-format -fno-builtin-memcpy")
+
 # Include the MIP SDK source
 add_subdirectory("${MIP_SDK_DIR}" EXCLUDE_FROM_ALL)
 include_directories("${MIP_SDK_SRC_DIR}")
@@ -142,10 +145,6 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
   ${GeographicLib_INCLUDE_DIRS}
 )
-
-# Set some general CMake flags
-add_definitions(-std=c++11)
-set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
 
 set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/subscribers.cpp
