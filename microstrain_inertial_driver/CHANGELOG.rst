@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.2.1 (2024-01-26)
+------------------
 * Fixes math to properly put the velocity into the sensor frame when using ENU (`#292 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/292>`_)
 * Contributors: Rob
 
