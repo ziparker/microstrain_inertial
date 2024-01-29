@@ -48,7 +48,7 @@ def generate_launch_description():
   # ****************************************************************** 
   microstrain_node = LifecycleNode(
     package    = _PACKAGE_NAME,
-    executable = "microstrain_inertial_driver_node",
+    executable = "microstrain_inertial_driver_lifecycle_node",
     name       = LaunchConfiguration('node_name'),
     namespace  = LaunchConfiguration('namespace'),
     parameters = [

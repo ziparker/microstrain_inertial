@@ -22,12 +22,12 @@
 
 #include "lifecycle_msgs/msg/transition.hpp"
 
-#include "microstrain_inertial_driver/microstrain_inertial_driver.h"
+#include "microstrain_inertial_driver/microstrain_inertial_driver_lifecycle.h"
 
 namespace microstrain
 {
 
-Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
+MicroStrainInertialDriverLifecycle::MicroStrainInertialDriverLifecycle() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
 {
   // Configure the logger
 #if MICROSTRAIN_ROLLING == 1 || MICROSTRAIN_HUMBLE == 1 || MICROSTRAIN_GALACTIC == 1
@@ -49,7 +49,7 @@ Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
 // Configure State Callback
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_configure(const rclcpp_lifecycle::State &prev_state)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn MicroStrainInertialDriverLifecycle::on_configure(const rclcpp_lifecycle::State &prev_state)
 {
   //RCUTILS_LOG_INFO_NAMED(get_name(), "on_configure() is called.");
  
@@ -64,7 +64,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Micros
 // Activate State Callback
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_activate(const rclcpp_lifecycle::State &prev_state)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn MicroStrainInertialDriverLifecycle::on_activate(const rclcpp_lifecycle::State &prev_state)
 {
   //RCUTILS_LOG_INFO_NAMED(get_name(), "on_activate() is called.");
 
@@ -79,7 +79,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Micros
 // Deactivate State Callback
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_deactivate(const rclcpp_lifecycle::State &prev_state)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn MicroStrainInertialDriverLifecycle::on_deactivate(const rclcpp_lifecycle::State &prev_state)
 {
   //RCUTILS_LOG_INFO_NAMED(get_name(), "on_deactivate() is called.");
 
@@ -94,7 +94,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Micros
 // Cleanup State Callback
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_cleanup(const rclcpp_lifecycle::State &prev_state)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn MicroStrainInertialDriverLifecycle::on_cleanup(const rclcpp_lifecycle::State &prev_state)
 {
   //RCUTILS_LOG_INFO_NAMED(get_name(), "on_cleanup() is called.");
 
@@ -109,7 +109,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Micros
  // Shutdown State Callback
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_shutdown(const rclcpp_lifecycle::State &prev_state)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn MicroStrainInertialDriverLifecycle::on_shutdown(const rclcpp_lifecycle::State &prev_state)
 {
   //RCUTILS_LOG_INFO_NAMED(get_name(), "on_shutdown() is called.");
 
@@ -126,7 +126,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Micros
 // Configure Node Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Microstrain::configure_node()
+bool MicroStrainInertialDriverLifecycle::configure_node()
 {
   ///////////////////////////////////////////////////////////////////////////
   //
@@ -156,7 +156,7 @@ bool Microstrain::configure_node()
 // Activate Node Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Microstrain::activate_node()
+bool MicroStrainInertialDriverLifecycle::activate_node()
 {
   // Activate the base node to start the background tasks
   if (!NodeCommon::activate())
@@ -166,13 +166,13 @@ bool Microstrain::activate_node()
   }
 
   // Start a timer around a wrapper function to catch errors
-  main_parsing_timer_ = createTimer<Microstrain>(node_, timer_update_rate_hz_, &Microstrain::parse_and_publish_main_wrapper, this);
+  main_parsing_timer_ = createTimer<MicroStrainInertialDriverLifecycle>(node_, timer_update_rate_hz_, &MicroStrainInertialDriverLifecycle::parse_and_publish_main_wrapper, this);
 
   // Start the aux timer if we were requested to do so
   if (config_.aux_device_ != nullptr)
   {
     RCLCPP_INFO(this->get_logger(), "Starting aux port parsing");
-    aux_parsing_timer_ = createTimer<Microstrain>(node_, 2.0, &Microstrain::parse_and_publish_aux_wrapper, this);
+    aux_parsing_timer_ = createTimer<MicroStrainInertialDriverLifecycle>(node_, 2.0, &MicroStrainInertialDriverLifecycle::parse_and_publish_aux_wrapper, this);
   }
   
   return true;
@@ -182,7 +182,7 @@ bool Microstrain::activate_node()
 // Deactivate Node Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Microstrain::deactivate_node()
+bool MicroStrainInertialDriverLifecycle::deactivate_node()
 {
   //Deactivate the base node
   if (!NodeCommon::deactivate())
@@ -198,7 +198,7 @@ bool Microstrain::deactivate_node()
 // Shutdown/Cleanup Node Function
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Microstrain::shutdown_or_cleanup_node()
+bool MicroStrainInertialDriverLifecycle::shutdown_or_cleanup_node()
 {
   //Shutdown the base node
   if(!NodeCommon::shutdown())
@@ -210,7 +210,7 @@ bool Microstrain::shutdown_or_cleanup_node()
   return true;
 }
 
-void Microstrain::parse_and_publish_main_wrapper()
+void MicroStrainInertialDriverLifecycle::parse_and_publish_main_wrapper()
 {
   // call the parsing function in a try catch block so we can transition the state instead of crashing when an error happens
   try
@@ -224,7 +224,7 @@ void Microstrain::parse_and_publish_main_wrapper()
   }
 }
 
-void Microstrain::parse_and_publish_aux_wrapper()
+void MicroStrainInertialDriverLifecycle::parse_and_publish_aux_wrapper()
 {
   // call the parsing function in a try catch block so we can transition the state instead of crashing when an error happens
   try
@@ -238,7 +238,7 @@ void Microstrain::parse_and_publish_aux_wrapper()
   }
 }
 
-void Microstrain::handle_exception()
+void MicroStrainInertialDriverLifecycle::handle_exception()
 {
   // Manuallly transition to deactivate state so that the node can be cleanly restarted
   RCLCPP_INFO(this->get_logger(), "Transitioning to deactivate state");
@@ -266,4 +266,4 @@ void Microstrain::handle_exception()
   }
 }
 
-} // namespace Microstrain
+} // namespace MicroStrainInertialDriverLifecycle

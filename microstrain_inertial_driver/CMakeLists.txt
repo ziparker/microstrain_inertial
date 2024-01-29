@@ -11,10 +11,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "" FORCE)
 
 # Force some options for this module and the MIP SDK
-set(BUILD_SHARED_LIBS_TEMP "${BUILD_SHARED_LIBS}")
 set(BUILD_EXAMPLES_TEMP "${BUILD_EXAMPLES}")
 set(BUILD_TESTING_TEMP "${BUILD_TESTING}")
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 
@@ -77,6 +75,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Include the MIP SDK source
+add_definitions(-fPIC)
 add_subdirectory("${MIP_SDK_DIR}" EXCLUDE_FROM_ALL)
 include_directories("${MIP_SDK_SRC_DIR}")
 
@@ -84,7 +83,9 @@ include_directories("${MIP_SDK_SRC_DIR}")
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -139,7 +140,7 @@ find_package(Eigen3 REQUIRED)
 find_package(GeographicLib REQUIRED)
 
 # We want to use the static library for libgeographic, but it doesn't seem to find it for us, so substitute it here
-string(REGEX REPLACE "[.]so[^\\/\\s]*$" ".a" GeographicLib_LIBRARIES ${GeographicLib_LIBRARIES})
+string(REGEX REPLACE "[.]so[^\\/\\s]*$" ".a" GeographicLib_STATIC_LIBRARIES ${GeographicLib_LIBRARIES})
 
 # Add the catkin includes
 include_directories(
@@ -150,14 +151,7 @@ include_directories(
   ${GeographicLib_INCLUDE_DIRS}
 )
 
-# Only lint the ROS2 code as the ROS1 code is linted through ROS1 and having two competing standards would make things messy quick
-set(NODE_SRC_FILES
-  src/microstrain_inertial_driver_node.cpp
-)
-
-ament_package()
-
-set(LIB_SRC_FILES
+set(COMMON_SRC_FILES
   ${COMMON_SRC_DIR}/subscribers.cpp
   ${COMMON_SRC_DIR}/publishers.cpp
   ${COMMON_SRC_DIR}/node_common.cpp
@@ -173,10 +167,8 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/utils/mip/ros_mip_device_main.cpp
   ${COMMON_SRC_DIR}/utils/mip/ros_mip_device_aux.cpp
   ${COMMON_SRC_DIR}/utils/mip/ros_connection.cpp
-
-  src/microstrain_inertial_driver.cpp
 )
-set(LIB_INC_FILES
+set(COMMON_INC_FILES
   ${COMMON_INC_DIR}/subscribers.h
   ${COMMON_INC_DIR}/publishers.h
   ${COMMON_INC_DIR}/node_common.h
@@ -192,13 +184,9 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/utils/mip/ros_mip_device_main.h
   ${COMMON_INC_DIR}/utils/mip/ros_mip_device_aux.h
   ${COMMON_INC_DIR}/utils/mip/ros_connection.h
-
-  include/${PROJECT_NAME}/microstrain_inertial_driver.h
 )
-add_library(${PROJECT_NAME} ${LIB_SRC_FILES} ${LIB_INC_FILES})
-ament_target_dependencies(${PROJECT_NAME}
-  rclcpp
-  rclcpp_lifecycle
+
+set(COMMON_AMENT_DEPS
   std_msgs
   std_srvs
   lifecycle_msgs
@@ -213,8 +201,68 @@ ament_target_dependencies(${PROJECT_NAME}
   microstrain_inertial_msgs
 )
 
+set(COMMON_LINK_LIBRARIES
+  mip
+)
+
+# Libraries
+set(COMPONENT_NAME ${PROJECT_NAME}_component)
+add_library(${COMPONENT_NAME} SHARED
+  ${COMMON_SRC_FILES} ${COMMON_INC_FILES}
+  src/microstrain_inertial_driver_component.cpp
+  include/${PROJECT_NAME}/microstrain_inertial_driver_component.h
+  include/${PROJECT_NAME}/microstrain_visibility.h
+)
+target_compile_definitions(${COMPONENT_NAME} PUBLIC
+  MICROSTRAIN_COMPONENT
+)
+target_compile_definitions(${COMPONENT_NAME} PRIVATE
+  MICROSTRAIN_DLL
+)
+ament_target_dependencies(${COMPONENT_NAME}
+  rclcpp
+  rclcpp_components
+  ${COMMON_AMENT_DEPS}
+)
+target_link_libraries(${COMPONENT_NAME}
+  ${COMMON_LINK_LIBRARIES}
+  ${GeographicLib_LIBRARIES}
+)
+
+set(LIFECYCLE_NAME ${PROJECT_NAME}_lifecycle)
+add_library(${LIFECYCLE_NAME} STATIC
+  ${COMMON_SRC_FILES} ${COMMON_INC_FILES}
+  src/microstrain_inertial_driver_lifecycle.cpp
+  include/${PROJECT_NAME}/microstrain_inertial_driver_lifecycle.h
+)
+target_compile_definitions(${LIFECYCLE_NAME} PUBLIC
+  MICROSTRAIN_LIFECYCLE
+)
+ament_target_dependencies(${LIFECYCLE_NAME}
+  rclcpp_lifecycle
+  ${COMMON_AMENT_DEPS}
+)
+target_link_libraries(${LIFECYCLE_NAME}
+  ${COMMON_LINK_LIBRARIES}
+  ${GeographicLib_STATIC_LIBRARIES}
+)
+
 # Executables
-add_executable(${PROJECT_NAME}_node ${NODE_SRC_FILES} ${NODE_INC_FILES})
+set(NODE_NAME ${PROJECT_NAME}_node)
+add_executable(${NODE_NAME}
+  src/microstrain_inertial_driver_node.cpp
+)
+target_link_libraries(${NODE_NAME}
+  ${COMPONENT_NAME}
+)
+
+set(LIFECYCLE_NODE_NAME ${PROJECT_NAME}_lifecycle_node)
+add_executable(${LIFECYCLE_NODE_NAME}
+  src/microstrain_inertial_driver_lifecycle_node.cpp
+)
+target_link_libraries(${LIFECYCLE_NODE_NAME}
+  ${LIFECYCLE_NAME}
+)
 
 # Annoying, but the ROS types don't match up with the MIP types for floats and doubles, so ignore those warnings for now
 set_source_files_properties(${COMMON_SRC_DIR}/services.cpp PROPERTIES COMPILE_OPTIONS "-Wno-narrowing")
@@ -244,22 +292,17 @@ if(DEFINED ENV{ROS_DISTRO})
   endif()
 endif()
 
-# Linking
-target_link_libraries(${PROJECT_NAME}
-  mip
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-  ${GeographicLib_LIBRARIES}
-)
-
 #############
 ## Install ##
 #############
 
-install(TARGETS ${PROJECT_NAME}_node
+install(TARGETS ${COMPONENT_NAME}
+  DESTINATION share
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+)
+install(TARGETS ${NODE_NAME} ${LIFECYCLE_NODE_NAME}
   DESTINATION share/${PROJECT_NAME}
   LIBRARY DESTINATION lib/${PROJECT_NAME}
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -274,7 +317,8 @@ install(DIRECTORY ${COMMON_DIR}/config
   DESTINATION share/${PROJECT_NAME}/${COMMON_NAME}
 )
 
+ament_package()
+
 # Reset the forced options
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "${BUILD_SHARED_LIBS_TEMP}" FORCE)
-set(BUILD_EXAMPLES OFF CACHE BOOL "${BUILD_EXAMPLES_TEMP}" FORCE)
-set(BUILD_TESTING OFF CACHE BOOL "${BUILD_TESTING_TEMP}" FORCE)
+set(BUILD_EXAMPLES ${BUILD_EXAMPLES_TEMP} CACHE BOOL "${BUILD_EXAMPLES_TEMP}" FORCE)
+set(BUILD_TESTING ${BUILD_TESTING_TEMP} CACHE BOOL "${BUILD_TESTING_TEMP}" FORCE)

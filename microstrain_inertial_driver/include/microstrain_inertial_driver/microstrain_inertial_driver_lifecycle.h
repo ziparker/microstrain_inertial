@@ -10,8 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef _MICROSTRAIN_3DM_H
-#define _MICROSTRAIN_3DM_H
+#ifndef MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_H_
+#define MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_H_
 
 #include <cstdio>
 #include <unistd.h>
@@ -26,13 +26,13 @@ namespace microstrain
 {
 
 ///
-/// \brief Microstrain class
+/// \brief MicroStrainInertialDriverLifecycle class
 ///
-class Microstrain : public rclcpp_lifecycle::LifecycleNode, public NodeCommon
+class MicroStrainInertialDriverLifecycle : public rclcpp_lifecycle::LifecycleNode, public NodeCommon
 {
  public:
-  Microstrain();
-  ~Microstrain() = default;
+  MicroStrainInertialDriverLifecycle();
+  ~MicroStrainInertialDriverLifecycle() = default;
 
   bool configure_node();
   bool activate_node();
@@ -54,18 +54,18 @@ class Microstrain : public rclcpp_lifecycle::LifecycleNode, public NodeCommon
   RosTimerType create_timer_wrapper(double rate_hz);
 
   void handle_exception();
-}; //Microstrain class
+}; //MicroStrainInertialDriverLifecycle class
 
 template<typename Object, void (Object::*Callback)()>
-RosTimerType Microstrain::create_timer_wrapper(double rate_hz)
+RosTimerType MicroStrainInertialDriverLifecycle::create_timer_wrapper(double rate_hz)
 {
 #ifdef MICROSTRAIN_ROLLING
   return createTimer(std::chrono::duration<double, std::milli>(1 / rate_hz), std::bind(Callback, this));
 #else
-  return createTimer<Microstrain>(node_, rate_hz, Callback, this);
+  return createTimer<MicroStrainInertialDriverLifecycle>(node_, rate_hz, Callback, this);
 #endif
 }
 
 } // namespace microstrain
 
-#endif  // _MICROSTRAIN_3DM_GX5_45_H
+#endif  // MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_H_
