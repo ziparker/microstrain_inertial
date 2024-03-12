@@ -2,6 +2,12 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updates microstrain_inertial_driver_common submodule (`#307 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/307>`_)
+* Resets forced Cmake variables properly (`#299 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/299>`_)
+* Contributors: Rob
+
 4.0.0 (2024-01-26)
 ------------------
 * ROS2 Standardize and update to work better with ROS standard tools (`#295 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/295>`_)
