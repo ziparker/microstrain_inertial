@@ -9,7 +9,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="1.5708 0 1.5708" />
         <geometry>
-          <mesh filename="package://microstrain_inertial_driver/meshes/microstrain_gq7.stl" scale="0.001 0.001 0.001" />
+          <mesh filename="package://microstrain_inertial_description/meshes/microstrain_gq7.stl" scale="0.001 0.001 0.001" />
         </geometry>
         <material name="microstrain_gq7_material"/>
       </visual>
