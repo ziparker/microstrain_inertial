@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.1.0 (2024-04-02)
+------------------
 * ROS puts all messages into single dir (`#311 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/311>`_)
 * Contributors: Rob
 
