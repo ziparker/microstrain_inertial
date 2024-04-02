@@ -2,7 +2,7 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
+4.1.0 (2024-04-02)
 ------------------
 * ROS updates microstrain_inertial_driver_common submodule (`#315 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/315>`_)
 * Moves meshes and urdf files to seperate package (`#313 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/313>`_)
