@@ -27,7 +27,7 @@
 namespace microstrain
 {
 
-Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
+Microstrain::Microstrain() : rclcpp::Node("microstrain_inertial_driver_node")
 {
   // Configure the logger
 #if MICROSTRAIN_ROLLING == 1 || MICROSTRAIN_HUMBLE == 1 || MICROSTRAIN_GALACTIC == 1
@@ -42,85 +42,6 @@ Microstrain::Microstrain() : rclcpp_lifecycle::LifecycleNode("ros2_mscl_node")
   if (!NodeCommon::initialize(this))
     RCLCPP_FATAL(this->get_logger(), "Failed to initialize base node");
 }
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Configure State Callback
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_configure(const rclcpp_lifecycle::State &prev_state)
-{
-  //RCUTILS_LOG_INFO_NAMED(get_name(), "on_configure() is called.");
- 
-  if(configure_node())
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-  else
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Activate State Callback
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_activate(const rclcpp_lifecycle::State &prev_state)
-{
-  //RCUTILS_LOG_INFO_NAMED(get_name(), "on_activate() is called.");
-
-  if(activate_node())
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-  else
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Deactivate State Callback
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_deactivate(const rclcpp_lifecycle::State &prev_state)
-{
-  //RCUTILS_LOG_INFO_NAMED(get_name(), "on_deactivate() is called.");
-
-  if(deactivate_node())
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-  else
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Cleanup State Callback
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_cleanup(const rclcpp_lifecycle::State &prev_state)
-{
-  //RCUTILS_LOG_INFO_NAMED(get_name(), "on_cleanup() is called.");
-
-  if(shutdown_or_cleanup_node())
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-  else
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
- // Shutdown State Callback
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Microstrain::on_shutdown(const rclcpp_lifecycle::State &prev_state)
-{
-  //RCUTILS_LOG_INFO_NAMED(get_name(), "on_shutdown() is called.");
-
-  if(shutdown_or_cleanup_node())
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-  else
-    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
-}
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Configure Node Function
@@ -240,30 +161,9 @@ void Microstrain::parse_and_publish_aux_wrapper()
 
 void Microstrain::handle_exception()
 {
-  // Manuallly transition to deactivate state so that the node can be cleanly restarted
-  RCLCPP_INFO(this->get_logger(), "Transitioning to deactivate state");
-  const auto& inactive_state = LifecycleNode::deactivate();
-  if (inactive_state.label() == "inactive")
-  {
-    RCLCPP_WARN(this->get_logger(), "Successfully transitioned to inactive, cleaning up node to fresh state");
-    const auto& cleanup_state = LifecycleNode::cleanup();
-    if (cleanup_state.label() == "unconfigured")
-    {
-      RCLCPP_WARN(this->get_logger(), "Node has been successfully cleaned up from error. transition to configure state to reconfigure");
-    }
-    else
-    {
-      RCLCPP_ERROR(this->get_logger(), "Transition to cleanup resulted in transition to %s instead of inactive", cleanup_state.label().c_str());
-      RCLCPP_ERROR(this->get_logger(), "Unable to recover, so transitioning to shutdown. This node is no longer usable");
-      LifecycleNode::shutdown();
-    }
-  }
-  else
-  {
-    RCLCPP_ERROR(this->get_logger(), "Transition to deactivate resulted in transition to %s instead of inactive", inactive_state.label().c_str());
-    RCLCPP_ERROR(this->get_logger(), "Unable to recover, so transitioning to shutdown. This node is no longer usable");
-    LifecycleNode::shutdown();
-  }
+  // Deactivate and shutdown
+  deactivate_node();
+  shutdown_or_cleanup_node();
 }
 
-} // namespace Microstrain
+} // namespace microstrain

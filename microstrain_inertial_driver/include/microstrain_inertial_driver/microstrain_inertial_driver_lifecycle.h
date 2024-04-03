@@ -10,8 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef _MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_H
-#define _MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_H
+#ifndef _MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_LIFECYCLE_H
+#define _MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_LIFECYCLE_H
 
 #include <cstdio>
 #include <unistd.h>
@@ -26,18 +26,24 @@ namespace microstrain
 {
 
 ///
-/// \brief Microstrain class
+/// \brief MicrostrainLifecycle class
 ///
-class Microstrain : public rclcpp::Node, public NodeCommon
+class MicrostrainLifecycle : public rclcpp_lifecycle::LifecycleNode, public NodeCommon
 {
  public:
-  Microstrain();
-  ~Microstrain() = default;
+  MicrostrainLifecycle();
+  ~MicrostrainLifecycle() = default;
 
   bool configure_node();
   bool activate_node();
   bool deactivate_node();
   bool shutdown_or_cleanup_node();
+
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_configure(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &prev_state);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State &prev_state);
 
   void parse_and_publish_main_wrapper();
   void parse_and_publish_aux_wrapper();
@@ -51,15 +57,15 @@ class Microstrain : public rclcpp::Node, public NodeCommon
 }; //MicrostrainLifecycle class
 
 template<typename Object, void (Object::*Callback)()>
-RosTimerType Microstrain::create_timer_wrapper(double rate_hz)
+RosTimerType MicrostrainLifecycle::create_timer_wrapper(double rate_hz)
 {
 #ifdef MICROSTRAIN_ROLLING
   return createTimer(std::chrono::duration<double, std::milli>(1 / rate_hz), std::bind(Callback, this));
 #else
-  return createTimer<Microstrain>(node_, rate_hz, Callback, this);
+  return createTimer<MicrostrainLifecycle>(node_, rate_hz, Callback, this);
 #endif
 }
 
 } // namespace microstrain
 
-#endif  // _MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_H
+#endif  // _MICROSTRAIN_INERTIAL_DRIVER_MICROSTRAIN_INERTIAL_DRIVER_LIFECYCLE_H
