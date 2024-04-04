@@ -2,8 +2,8 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.2.0 (2024-04-04)
+------------------
 * Adds ability for node to be launched as a normal non lifecycle node (`#317 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/317>`_)
 * Contributors: Rob
 
