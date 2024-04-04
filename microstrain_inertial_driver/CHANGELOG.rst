@@ -2,6 +2,11 @@
 Changelog for package microstrain_inertial_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updates submodule to be in line with ROS2
+* Contributors: Rob Fisher
+
 4.1.0 (2024-04-02)
 ------------------
 * ROS updates microstrain_inertial_driver_common submodule (`#315 <https://github.com/LORD-MicroStrain/microstrain_inertial/issues/315>`_)
