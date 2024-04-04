@@ -123,8 +123,6 @@ The node has some optional launch parameters that can be specified from the comm
 - `node_name` : name of the driver, default: `microstrain_inertial_driver`
 - `debug`     : output debug logs, default: `false`
 - `params_file` : path to a parameter file to override the default parameters stored in [`params.yml`](./microstrain_inertial_driver/microstrain_inertial_driver_common/config/params.yml), default: [`empty.yml`](./microstrain_inertial_driver/config/empty.yml)
-- `configure` : If set to the exact string `true` the driver will automatically transition into the configure state.
-- `activate`  : If set to the exact string `true` the driver will automatically transition into the activate state.
     
 #### Publish data from two devices simultaneously  
 
@@ -153,11 +151,16 @@ An example subscriber node can be found in the [MicroStrain Examples](./microstr
 
 #### Lifecycle Node
 
-This driver is implemented as a lifecycle node. It is possible to launch it in an unconfigured and unactivated state.
+This package also provides a lifecycle node implementation. This version of the driver can be launched by running:
+```bash
+ros2 launch microstrain_inertial_driver microstrain_lifecycle_launch.py
+```
 
-You may change this with the `configure` and `activate` [arguments](#launch-the-node-and-publish-data) to the launch file.
+This launch file accepts all of the same arguments as the above node as well as:
+- `configure` : If set to the exact string `true` the driver will automatically transition into the configure state.
+- `activate`  : If set to the exact string `true` the driver will automatically transition into the activate state.
 
-The node may be transitioned anytime after startup using the following commands (note that the `namespace` and `name` parameters will affect the node name in the following commands):
+Additionally, the node may be transitioned anytime after startup using the following commands (note that the `namespace` and `name` parameters will affect the node name in the following commands):
 
 - Transition to configure state: 
     ```bash
