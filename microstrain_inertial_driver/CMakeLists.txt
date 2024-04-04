@@ -150,14 +150,9 @@ include_directories(
   ${GeographicLib_INCLUDE_DIRS}
 )
 
-# Only lint the ROS2 code as the ROS1 code is linted through ROS1 and having two competing standards would make things messy quick
-set(NODE_SRC_FILES
-  src/microstrain_inertial_driver_node.cpp
-)
-
 ament_package()
 
-set(LIB_SRC_FILES
+set(COMMON_SRC_FILES
   ${COMMON_SRC_DIR}/subscribers.cpp
   ${COMMON_SRC_DIR}/publishers.cpp
   ${COMMON_SRC_DIR}/node_common.cpp
@@ -174,9 +169,8 @@ set(LIB_SRC_FILES
   ${COMMON_SRC_DIR}/utils/mip/ros_mip_device_aux.cpp
   ${COMMON_SRC_DIR}/utils/mip/ros_connection.cpp
 
-  src/microstrain_inertial_driver.cpp
 )
-set(LIB_INC_FILES
+set(COMMON_INC_FILES
   ${COMMON_INC_DIR}/subscribers.h
   ${COMMON_INC_DIR}/publishers.h
   ${COMMON_INC_DIR}/node_common.h
@@ -193,10 +187,10 @@ set(LIB_INC_FILES
   ${COMMON_INC_DIR}/utils/mip/ros_mip_device_aux.h
   ${COMMON_INC_DIR}/utils/mip/ros_connection.h
 
-  include/${PROJECT_NAME}/microstrain_inertial_driver.h
 )
-add_library(${PROJECT_NAME} ${LIB_SRC_FILES} ${LIB_INC_FILES})
-ament_target_dependencies(${PROJECT_NAME}
+set(COMMON_FILES ${COMMON_SRC_FILES} ${COMMON_INC_FILES})
+
+set(AMENT_COMMON_DEPENDENCIES
   rclcpp
   rclcpp_lifecycle
   std_msgs
@@ -213,8 +207,36 @@ ament_target_dependencies(${PROJECT_NAME}
   microstrain_inertial_msgs
 )
 
-# Executables
-add_executable(${PROJECT_NAME}_node ${NODE_SRC_FILES} ${NODE_INC_FILES})
+# Plain node
+set(NODE_NAME ${PROJECT_NAME}_node)
+set(NODE_SRC_FILES
+  src/microstrain_inertial_driver.cpp
+  src/microstrain_inertial_driver_node.cpp
+)
+set(NODE_INC_FILES
+  include/${PROJECT_NAME}/microstrain_inertial_driver.h
+)
+set(NODE_FILES ${NODE_SRC_FILES} ${NODE_INC_FILES})
+add_executable(${NODE_NAME} ${NODE_FILES} ${COMMON_FILES})
+ament_target_dependencies(${NODE_NAME}
+  ${AMENT_COMMON_DEPENDENCIES}
+)
+
+# Lifecycle node
+set(LIFECYCLE_NAME ${PROJECT_NAME}_lifecycle_node)
+set(LIFECYCLE_SRC_FILES
+  src/microstrain_inertial_driver_lifecycle.cpp
+  src/microstrain_inertial_driver_lifecycle_node.cpp
+)
+set(LIFECYCLE_INC_FILES
+  include/${PROJECT_NAME}/microstrain_inertial_driver_lifecycle.h
+)
+set(LIFECYCLE_FILES ${LIFECYCLE_SRC_FILES} ${LIFECYCLE_INC_FILES})
+add_executable(${LIFECYCLE_NAME} ${LIFECYCLE_FILES} ${COMMON_FILES})
+target_compile_definitions(${LIFECYCLE_NAME} PUBLIC MICROSTRAIN_LIFECYCLE)
+ament_target_dependencies(${LIFECYCLE_NAME}
+  ${AMENT_COMMON_DEPENDENCIES}
+)
 
 # Annoying, but the ROS types don't match up with the MIP types for floats and doubles, so ignore those warnings for now
 set_source_files_properties(${COMMON_SRC_DIR}/services.cpp PROPERTIES COMPILE_OPTIONS "-Wno-narrowing")
@@ -245,13 +267,12 @@ if(DEFINED ENV{ROS_DISTRO})
 endif()
 
 # Linking
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${LIFECYCLE_NAME}
   mip
-  ${catkin_LIBRARIES}
+  ${GeographicLib_LIBRARIES}
 )
-target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
+target_link_libraries(${NODE_NAME}
+  mip
   ${GeographicLib_LIBRARIES}
 )
 
@@ -259,11 +280,15 @@ target_link_libraries(${PROJECT_NAME}_node
 ## Install ##
 #############
 
-install(TARGETS ${PROJECT_NAME}_node
+install(TARGETS ${LIFECYCLE_NAME}
   DESTINATION share/${PROJECT_NAME}
   LIBRARY DESTINATION lib/${PROJECT_NAME}
   RUNTIME DESTINATION lib/${PROJECT_NAME}
-  PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
+)
+install(TARGETS ${NODE_NAME}
+  DESTINATION share/${PROJECT_NAME}
+  LIBRARY DESTINATION lib/${PROJECT_NAME}
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 install(DIRECTORY launch config

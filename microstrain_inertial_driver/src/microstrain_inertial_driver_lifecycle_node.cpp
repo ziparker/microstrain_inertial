@@ -9,24 +9,14 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "microstrain_inertial_driver/microstrain_inertial_driver.h"
+#include "microstrain_inertial_driver/microstrain_inertial_driver_lifecycle.h"
 
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
    
-  // Configure and activate the node
-  auto node = std::make_shared<microstrain::Microstrain>();
-  if (!node->configure_node())
-  {
-    RCLCPP_FATAL(node->get_logger(), "Failed to configure node");
-    return 1;
-  }
-  if (!node->activate_node())
-  {
-    RCLCPP_FATAL(node->get_logger(), "Failed to activate node");
-    return 2;
-  }
+  // Make the lifecycly node and allow external transitions to configure and activate it
+  auto node = std::make_shared<microstrain::MicrostrainLifecycle>();
 
   // Spin until we are shut down
   rclcpp::executors::SingleThreadedExecutor exe;
@@ -49,5 +39,5 @@ int main(int argc, char **argv)
   // Shut down anything remaining using the ROS shutdown call
   rclcpp::shutdown();
 
-  return status;
+  return 0;
 }
