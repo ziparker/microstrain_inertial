@@ -245,15 +245,17 @@ set(BUILD_TESTING OFF CACHE BOOL "${BUILD_TESTING_TEMP}" FORCE)
 ## Testing ##
 #############
 
-# build/c++11 and whitespace/braces only trip on the buildfarm which is melodic, maybe it's not needed in noetic?
-set(ROSLINT_CPP_OPTS "--filter=-whitespace/line_length,-runtime/references,-readability/fn_size,-whitespace/parens,-build/c++11,-whitespace/braces")
-get_target_property(ROSLINT_SOURCES ${PROJECT_NAME} SOURCES)
-roslint_cpp(${ROSLINT_SOURCES})
+if(${CATKIN_ENABLE_TESTING})
+    # build/c++11 and whitespace/braces only trip on the buildfarm which is melodic, maybe it's not needed in noetic?
+    set(ROSLINT_CPP_OPTS "--filter=-whitespace/line_length,-runtime/references,-readability/fn_size,-whitespace/parens,-build/c++11,-whitespace/braces")
+    get_target_property(ROSLINT_SOURCES ${PROJECT_NAME} SOURCES)
+    roslint_cpp(${ROSLINT_SOURCES})
 
-roslint_add_test()
+    roslint_add_test()
 
-# Make sure that the wiki document is up to date
-add_test(
-  NAME wiki_publishers
-  COMMAND ${CMAKE_COMMAND} -E env ${COMMON_DIR}/tools/check-wiki-publishers.sh
-)
+    # Make sure that the wiki document is up to date
+    add_test(
+      NAME wiki_publishers
+      COMMAND ${CMAKE_COMMAND} -E env ${COMMON_DIR}/tools/check-wiki-publishers.sh
+    )
+endif()
