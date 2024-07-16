@@ -128,7 +128,6 @@ catkin_package(
 include_directories(${catkin_INCLUDE_DIRS} include ${COMMON_DIR}/include)
 
 # Set some general CMake flags
-add_definitions(-std=c++11)
 set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
 
 set(LIB_SRC_FILES
